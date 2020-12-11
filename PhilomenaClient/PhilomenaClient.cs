@@ -2,11 +2,16 @@
 
 namespace Philomena.Client
 {
-    public class PhilomenaClient
+    public class PhilomenaClient : IPhilomenaClient
     {
-        public void Search()
+        public ISearchQuery Search(string query)
         {
-            Console.WriteLine("Searching...");
+            throw new NotImplementedException();
+        }
+
+        ISearchQuery IPhilomenaClient.Search()
+        {
+            throw new NotImplementedException();
         }
     }
 }
