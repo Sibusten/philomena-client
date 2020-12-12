@@ -1,18 +1,8 @@
 using System.Collections.Generic;
+using Philomena.Client.Api;
 
 namespace Philomena.Client
 {
-    public enum SortDirection
-    {
-        Descending,
-        Ascending
-    }
-
-    public enum SortField
-    {
-        ImageId,
-    }
-
     public interface ISearchQuery
     {
         /// <summary>

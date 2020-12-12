@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Philomena.Client;
+using Philomena.Client.Api;
 
 namespace Philomena.Client.Examples
 {
