@@ -1,5 +1,6 @@
 using System.Collections.Generic;
-using Nullforce.Api.Derpibooru.JsonModels;
+using System.Threading.Tasks;
+using Philomena.Client.Api.Models;
 
 namespace Philomena.Client.Api
 {
@@ -21,14 +22,14 @@ namespace Philomena.Client.Api
         /// </summary>
         /// <param name="commentId">The comment ID to fetch</param>
         /// <returns>The comment response</returns>
-        CommentJson GetComment(int commentId);
+        // CommentJson GetComment(int commentId);
 
         /// <summary>
         /// Fetches an image response for the image ID
         /// </summary>
         /// <param name="imageId">The image ID to fetch</param>
         /// <returns>The image response</returns>
-        ImageJson GetImage(int imageId, string apiKey);
+        // ImageJson GetImage(int imageId, string apiKey);
 
         /// <summary>
         /// Submits a new image. Both key and url are required. Errors will result in an {"errors":image-errors-response}. (TODO)
@@ -36,27 +37,27 @@ namespace Philomena.Client.Api
         /// <param name="apiKey">The API key of the user submitting the image</param>
         /// <param name="imageUrl">The direct URL to the image file</param>
         /// <returns></returns>
-        ImageJson SubmitImage(string apiKey, string imageUrl);
+        // ImageJson SubmitImage(string apiKey, string imageUrl);
 
         /// <summary>
         /// Fetches an image response for the for the current featured image.
         /// </summary>
         /// <returns>The featured image</returns>
-        ImageJson GetFeaturedImage();
+        // ImageJson GetFeaturedImage();
 
         /// <summary>
         /// Fetches a tag response for the tag slug.
         /// </summary>
         /// <param name="tagSlug">The tag slug to fetch</param>
         /// <returns>The tag response</returns>
-        TagJson GetTag(string tagSlug);
+        Task<TagModel> GetTag(string tagSlug);
 
         /// <summary>
         /// Fetches a post response for the post ID
         /// </summary>
         /// <param name="postId">The post ID to fetch</param>
         /// <returns>The post response</returns>
-        PostJson GetPost(int postId);
+        // PostJson GetPost(int postId);
 
         /// <summary>
         /// Fetches a profile response for the user ID
@@ -93,7 +94,7 @@ namespace Philomena.Client.Api
         /// </summary>
         /// <param name="url">The URL to fetch an oEmbed response for</param>
         /// <returns>The oEmbed response</returns>
-        OembedJson GetOembed(string url);
+        // OembedJson GetOembed(string url);
 
         /// <summary>
         /// Executes the search given by the query and returns comment responses sorted by descending creation time.
@@ -103,7 +104,7 @@ namespace Philomena.Client.Api
         /// <param name="perPage">How many comments to fetch per page. Maximum of 50.
         /// <param name="apiKey">The user's API key</param>
         /// <returns>A page of comments matching the search query</returns>
-        List<CommentJson> SearchComments(string query, int page, int perPage, string apiKey);
+        // CommentSearchRootJson SearchComments(string query, int page, int perPage, string apiKey);
 
         /// <summary>
         /// Executes the search given by the query and returns gallery responses sorted by descending creation time.
@@ -113,7 +114,7 @@ namespace Philomena.Client.Api
         /// <param name="perPage">How many galleries to fetch per page. Maximum of 50.</param>
         /// <param name="apiKey">The user's API key</param>
         /// <returns>A page of galleries matching the search query</returns>
-        List<GalleryJson> SearchGalleries(string query, int page, int perPage, string apiKey);
+        // GallerySearchRoot SearchGalleries(string query, int page, int perPage, string apiKey);
 
         /// <summary>
         /// Executes the search given by the query and returns post responses sorted by descending creation time.
@@ -123,7 +124,7 @@ namespace Philomena.Client.Api
         /// <param name="perPage">How many posts to fetch per page. Maximum of 50.</param>
         /// <param name="apiKey">The user's API key</param>
         /// <returns>A page of posts matching the search query</returns>
-        List<PostJson> SearchPosts(string query, int page, int perPage, string apiKey);
+        // PostSearchRootJson SearchPosts(string query, int page, int perPage, string apiKey);
 
         /// <summary>
         /// Executes the search given by the query and returns image responses
@@ -136,7 +137,7 @@ namespace Philomena.Client.Api
         /// <param name="filterId">The filter to use when searching</param>
         /// <param name="apiKey">The user's API key</param>
         /// <returns>A page of images matching the search query</returns>
-        List<ImageJson> SearchImages(string query, int page, int perPage, SortField sortField, SortDirection sortDirection, int filterId, string apiKey);
+        Task<ImageSearchModel> SearchImages(string query, int? page, int? perPage, SortField? sortField, SortDirection? sortDirection, int? filterId, string? apiKey);
 
         /// <summary>
         /// Executes the search given by the query and returns tag responses sorted by descending image count.
@@ -145,7 +146,7 @@ namespace Philomena.Client.Api
         /// <param name="page">The page of tags to fetch</param>
         /// <param name="perPage">How many tags to fetch per page. Maximum of 50.</param>
         /// <returns>A page of tags matching the search query</returns>
-        List<TagJson> SearchTags(string query, int page, int perPage);
+        // TagSearchRootJson SearchTags(string query, int page, int perPage);
 
         /// <summary>
         /// Returns image responses based on the results of reverse-searching the image given by the url.
@@ -154,7 +155,7 @@ namespace Philomena.Client.Api
         /// <param name="distance">How similar the matched images must be. Ranges from 0 to 1.</param>
         /// <param name="apiKey">The user's API key</param>
         /// <returns>A list of image responses that are similar to the searched image</returns>
-        List<ImageJson> ReverseImageSearch(string imageUrl, double distance, string apiKey);
+        // List<ImageJson> ReverseImageSearch(string imageUrl, double distance, string apiKey);
 
         /// <summary>
         /// Fetches a list of forum responses.
@@ -192,7 +193,7 @@ namespace Philomena.Client.Api
         /// <param name="topicSlug">The topic slug</param>
         /// <param name="page">The page of posts to fetch</param>
         /// <returns>A page of posts for the topic</returns>
-        List<PostJson> GetPosts(string forumShortName, string topicSlug, int page);
+        // List<PostJson> GetPosts(string forumShortName, string topicSlug, int page);
 
         /// <summary>
         /// Fetches a post response for the abbreviated forum name, topic slug, and post ID.
@@ -201,6 +202,6 @@ namespace Philomena.Client.Api
         /// <param name="topicSlug">The topic slug</param>
         /// <param name="postId">The ID of the post to fetch</param>
         /// <returns>The post response</returns>
-        PostJson GetPost(string forumShortName, string topicSlug, int postId);
+        // PostJson GetPost(string forumShortName, string topicSlug, int postId);
     }
 }

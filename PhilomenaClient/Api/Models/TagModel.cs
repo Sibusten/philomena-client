@@ -94,4 +94,10 @@ namespace Philomena.Client.Api.Models
         [JsonPropertyName("spoiler_image_uri")]
         public string? SpoilerImageUri { get; set; }
     }
+
+    public class TagResponseModel
+    {
+        [JsonPropertyName("tag")]
+        public TagModel? Tag { get; set; }
+    }
 }
