@@ -1,13 +1,22 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Philomena.Client.Api;
+using Philomena.Client.Api.Models;
 
 namespace Philomena.Client.Examples
 {
-    class Program
+    public class Program
     {
         static async Task Main(string[] args)
         {
+            PhilomenaApi api = new PhilomenaApi("https://derpibooru.org");
+
+            ImageSearchModel searchResults = await api.SearchImages("fluttershy");
+            Console.WriteLine($"Found {searchResults.Total} images");
+
+            return;
+
+
             PhilomenaClient client = new PhilomenaClient();
 
             ISearchQuery query = client
