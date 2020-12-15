@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace Philomena.Client.Api.Models
@@ -50,7 +51,7 @@ namespace Philomena.Client.Api.Models
         /// A list of tag IDs (as ints) that this filter will spoil.
         /// </summary>
         [JsonPropertyName("spoilered_tag_ids")]
-        public int[]? SpoileredTagIds { get; set; }
+        public List<int>? SpoileredTagIds { get; set; }
 
         /// <summary>
         /// The complex spoiled filter.
@@ -62,7 +63,7 @@ namespace Philomena.Client.Api.Models
         /// A list of tag IDs (as ints) that this filter will hide.
         /// </summary>
         [JsonPropertyName("hidden_tag_ids")]
-        public int[]? HiddenTagIds { get; set; }
+        public List<int>? HiddenTagIds { get; set; }
 
         /// <summary>
         /// The complex hidden filter.

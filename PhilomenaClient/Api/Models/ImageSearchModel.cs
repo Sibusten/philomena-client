@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace Philomena.Client.Api.Models
@@ -5,10 +6,10 @@ namespace Philomena.Client.Api.Models
     public class ImageSearchModel
     {
         [JsonPropertyName("images")]
-        public ImageModel[]? Images { get; set; }
+        public List<ImageModel>? Images { get; set; }
 
         [JsonPropertyName("interactions")]
-        public InteractionModel[]? Interactions { get; set; }
+        public List<InteractionModel>? Interactions { get; set; }
 
         [JsonPropertyName("total")]
         public int? Total { get; set; }

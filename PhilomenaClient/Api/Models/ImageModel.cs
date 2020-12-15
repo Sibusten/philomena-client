@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace Philomena.Client.Api.Models
@@ -171,13 +172,13 @@ namespace Philomena.Client.Api.Models
         /// A list of tag IDs the image contains.
         /// </summary>
         [JsonPropertyName("tag_ids")]
-        public int[]? TagIds { get; set; }
+        public List<int>? TagIds { get; set; }
 
         /// <summary>
         /// A list of tag names the image contains.
         /// </summary>
         [JsonPropertyName("tags")]
-        public string[]? Tags { get; set; }
+        public List<string>? Tags { get; set; }
 
         /// <summary>
         /// Whether the image has finished thumbnail generation. Do not attempt to load images from view_url or representations if this is false.

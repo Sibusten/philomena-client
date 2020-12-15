@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace Philomena.Client.Api.Models
@@ -75,12 +76,12 @@ namespace Philomena.Client.Api.Models
         /// The links the user has registered. See <see cref="LinkModel"/>.
         /// </summary>
         [JsonPropertyName("links")]
-        public LinkModel[]? Links { get; set; }
+        public List<LinkModel>? Links { get; set; }
 
         /// <summary>
         /// The awards/badges of the user. See <see cref="AwardModel"/>.
         /// </summary>
         [JsonPropertyName("awards")]
-        public AwardModel[]? Awards { get; set; }
+        public List<AwardModel>? Awards { get; set; }
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace Philomena.Client.Api.Models
@@ -44,7 +45,7 @@ namespace Philomena.Client.Api.Models
         /// The names of the image's tags.
         /// </summary>
         [JsonPropertyName("derpibooru_tags")]
-        public string[]? DerpibooruTags { get; set; }
+        public List<string>? DerpibooruTags { get; set; }
 
         /// <summary>
         /// Always "Derpibooru".

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace Philomena.Client.Api.Models
@@ -14,7 +15,7 @@ namespace Philomena.Client.Api.Models
         /// The slugs of the tags aliased to this tag.
         /// </summary>
         [JsonPropertyName("aliases")]
-        public string[]? Aliases { get; set; }
+        public List<string>? Aliases { get; set; }
 
         /// <summary>
         /// The category class of this tag. One of "character", "content-fanmade", "content-official", "error", "oc", "origin", "rating", "species", "spoiler".
@@ -32,7 +33,7 @@ namespace Philomena.Client.Api.Models
         /// An array of objects containing DNP entries claimed on the tag.
         /// </summary>
         [JsonPropertyName("dnp_entries")]
-        public int[]? DnpEntries { get; set; }
+        public List<int>? DnpEntries { get; set; }
 
         /// <summary>
         /// The tag's ID.
@@ -50,13 +51,13 @@ namespace Philomena.Client.Api.Models
         /// The slugs of the tags this tag is implied by.
         /// </summary>
         [JsonPropertyName("implied_by_tags")]
-        public string[]? ImpliedByTags { get; set; }
+        public List<string>? ImpliedByTags { get; set; }
 
         /// <summary>
         /// The slugs of the tags this tag implies.
         /// </summary>
         [JsonPropertyName("implied_tags")]
-        public string[]? ImpliedTags { get; set; }
+        public List<string>? ImpliedTags { get; set; }
 
         /// <summary>
         /// The name of the tag.
