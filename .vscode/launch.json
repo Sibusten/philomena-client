@@ -12,7 +12,7 @@
             "program": "${workspaceFolder}/PhilomenaClient.Examples/bin/Debug/net5.0/PhilomenaClient.Examples.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
-            "console": "internalConsole",
+            "console": "integratedTerminal",
             "stopAtEntry": false
         },
         {
