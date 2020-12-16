@@ -20,14 +20,9 @@ namespace Philomena.Client.Examples.Api
             Console.WriteLine($"Source: {image.SourceUrl}");
         }
 
-        public async Task RunExample()
+        private async Task SearchDefault(PhilomenaApi api, string searchQuery)
         {
-            Console.WriteLine("Creating API client");
-            PhilomenaApi api = new PhilomenaApi("https://derpibooru.org");
-
-            string searchQuery = "safe, fluttershy, rainbow dash, (transparent background || white background)";
-
-            Console.WriteLine($"Searching for '{searchQuery}'");
+            Console.WriteLine("Using default options (sort by ID, descending)");
             ImageSearchModel searchResults = await api.SearchImages(searchQuery);
 
             Console.WriteLine($"Found {searchResults.Total} images");
@@ -36,8 +31,33 @@ namespace Philomena.Client.Examples.Api
             ImageModel newestImage = searchResults.Images.First();
             Console.WriteLine("Newest image:");
             PrintImageInfo(newestImage);
+            Console.WriteLine();
+        }
 
-            // TODO: Console.WriteLine("Searching for highest rated image")
+        private async Task SearchHighestRated(PhilomenaApi api, string searchQuery)
+        {
+            Console.WriteLine("Searching for highest rated image");
+            ImageSearchModel searchResults = await api.SearchImages(searchQuery, sortField: SortField.Score);
+
+            ImageModel highestScoringImage = searchResults.Images.First();
+            Console.WriteLine("Highest scoring image:");
+            PrintImageInfo(highestScoringImage);
+            Console.WriteLine();
+        }
+
+        public async Task RunExample()
+        {
+            Console.WriteLine("Creating API client");
+            PhilomenaApi api = new PhilomenaApi("https://derpibooru.org");
+
+            string searchQuery = "safe, fluttershy, rainbow dash, (transparent background || white background)";
+            Console.WriteLine($"Using search query: '{searchQuery}'");
+
+            // Search with default options
+            await SearchDefault(api, searchQuery);
+
+            // Search for highest rated image
+            await SearchHighestRated(api, searchQuery);
         }
     }
 }
