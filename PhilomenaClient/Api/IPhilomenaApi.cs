@@ -154,7 +154,7 @@ namespace Philomena.Client.Api
         /// <param name="filterId">The filter to use when searching</param>
         /// <param name="apiKey">The user's API key</param>
         /// <returns>A page of images matching the search query</returns>
-        Task<ImageSearchModel> SearchImages(string query, int? page, int? perPage, SortField? sortField, SortDirection? sortDirection, int? filterId, string? apiKey);
+        Task<ImageSearchModel> SearchImages(string query, int? page, int? perPage, SortField? sortField, SortDirection? sortDirection, int? filterId, string? apiKey, int? randomSeed);
 
         /// <summary>
         /// Executes the search given by the query and returns tag responses sorted by descending image count.
