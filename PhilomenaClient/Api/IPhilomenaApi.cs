@@ -13,6 +13,23 @@ namespace Philomena.Client.Api
     public enum SortField
     {
         ImageId,
+        LastModificationDate,
+        InitialPostDate,
+        AspectRatio,
+        FaveCount,
+        Upvotes,
+        Downvotes,
+        Score,
+        WilsonScore,
+        Relevance,
+        Width,
+        Height,
+        Comments,
+        TagCount,
+        Pixels,
+        FileSize,
+        Duration,
+        Random
     }
 
     public interface IPhilomenaApi
