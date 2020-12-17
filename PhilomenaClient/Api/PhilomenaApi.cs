@@ -119,5 +119,15 @@ namespace Philomena.Client.Api
                 .SetQueryParam(_apiKeyParam, apiKey)
                 .GetJsonAsync<ImageSearchModel>();
         }
+
+        public async Task<TagSearchModel> SearchTags(string query, int? page, int? perPage)
+        {
+            return await _apiRequest
+                .AppendPathSegment("search/tags")
+                .SetQueryParam(_queryParam, query)
+                .SetQueryParam(_pageParam, page)
+                .SetQueryParam(_perPageParam, perPage)
+                .GetJsonAsync<TagSearchModel>();
+        }
     }
 }

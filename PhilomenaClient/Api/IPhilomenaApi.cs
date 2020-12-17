@@ -163,7 +163,7 @@ namespace Philomena.Client.Api
         /// <param name="page">The page of tags to fetch</param>
         /// <param name="perPage">How many tags to fetch per page. Maximum of 50.</param>
         /// <returns>A page of tags matching the search query</returns>
-        // TagSearchRootJson SearchTags(string query, int page, int perPage);
+        Task<TagSearchModel> SearchTags(string query, int? page, int? perPage);
 
         /// <summary>
         /// Returns image responses based on the results of reverse-searching the image given by the url.
