@@ -12,7 +12,7 @@ namespace Philomena.Client.Examples.Client
             PhilomenaClient client = new PhilomenaClient("https://derpibooru.org");
             IImage image = await client.Search("fluttershy").GetFirstAsync();
 
-            string filename = $"{image.Model.Id}.{image.Model.Format}";
+            string filename = $"ExampleDownloads/DownloadImageToFile/{image.Model.Id}.{image.Model.Format}";
             FileInfo file = new FileInfo(filename);
 
             await image.DownloadToFileAsync(file);
