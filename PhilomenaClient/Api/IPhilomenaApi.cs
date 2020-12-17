@@ -67,7 +67,7 @@ namespace Philomena.Client.Api
         /// </summary>
         /// <param name="tagSlug">The tag slug to fetch</param>
         /// <returns>The tag response</returns>
-        Task<TagModel> GetTag(string tagSlug);
+        Task<TagModel> GetTagAsync(string tagSlug);
 
         /// <summary>
         /// Fetches a post response for the post ID
@@ -154,7 +154,7 @@ namespace Philomena.Client.Api
         /// <param name="filterId">The filter to use when searching</param>
         /// <param name="apiKey">The user's API key</param>
         /// <returns>A page of images matching the search query</returns>
-        Task<ImageSearchModel> SearchImages(string query, int? page, int? perPage, SortField? sortField, SortDirection? sortDirection, int? filterId, string? apiKey, int? randomSeed);
+        Task<ImageSearchModel> SearchImagesAsync(string query, int? page, int? perPage, SortField? sortField, SortDirection? sortDirection, int? filterId, string? apiKey, int? randomSeed);
 
         /// <summary>
         /// Executes the search given by the query and returns tag responses sorted by descending image count.
@@ -163,7 +163,7 @@ namespace Philomena.Client.Api
         /// <param name="page">The page of tags to fetch</param>
         /// <param name="perPage">How many tags to fetch per page. Maximum of 50.</param>
         /// <returns>A page of tags matching the search query</returns>
-        Task<TagSearchModel> SearchTags(string query, int? page, int? perPage);
+        Task<TagSearchModel> SearchTagsAsync(string query, int? page, int? perPage);
 
         /// <summary>
         /// Returns image responses based on the results of reverse-searching the image given by the url.

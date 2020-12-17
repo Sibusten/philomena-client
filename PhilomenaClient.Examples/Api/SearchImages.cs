@@ -23,7 +23,7 @@ namespace Philomena.Client.Examples.Api
         private async Task SearchDefault(PhilomenaApi api, string searchQuery)
         {
             Console.WriteLine("Using default options (sort by ID, descending)");
-            ImageSearchModel searchResults = await api.SearchImages(searchQuery);
+            ImageSearchModel searchResults = await api.SearchImagesAsync(searchQuery);
 
             Console.WriteLine($"Found {searchResults.Total} images");
             Console.WriteLine();
@@ -37,7 +37,7 @@ namespace Philomena.Client.Examples.Api
         private async Task SearchHighestRated(PhilomenaApi api, string searchQuery)
         {
             Console.WriteLine("Searching for highest rated image");
-            ImageSearchModel searchResults = await api.SearchImages(searchQuery, sortField: SortField.Score);
+            ImageSearchModel searchResults = await api.SearchImagesAsync(searchQuery, sortField: SortField.Score);
 
             ImageModel highestScoringImage = searchResults.Images.First();
             Console.WriteLine("Highest scoring image:");
@@ -53,7 +53,7 @@ namespace Philomena.Client.Examples.Api
             int randomSeed = api.GetRandomSearchSeed();
             Console.WriteLine($"Random seed: {randomSeed}");
 
-            ImageSearchModel searchResults = await api.SearchImages(searchQuery, sortField: SortField.Random, randomSeed: randomSeed);
+            ImageSearchModel searchResults = await api.SearchImagesAsync(searchQuery, sortField: SortField.Random, randomSeed: randomSeed);
 
             ImageModel randomImage = searchResults.Images.First();
             Console.WriteLine("Random image:");
@@ -61,7 +61,7 @@ namespace Philomena.Client.Examples.Api
             Console.WriteLine();
 
             // Use the same seed for later pages
-            searchResults = await api.SearchImages(searchQuery, page: 2, sortField: SortField.Random, randomSeed: randomSeed);
+            searchResults = await api.SearchImagesAsync(searchQuery, page: 2, sortField: SortField.Random, randomSeed: randomSeed);
 
             randomImage = searchResults.Images.First();
             Console.WriteLine("Random image page 2:");

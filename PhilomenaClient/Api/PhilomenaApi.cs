@@ -88,7 +88,7 @@ namespace Philomena.Client.Api
             _baseUrl = baseUrl;
         }
 
-        public async Task<TagModel> GetTag(string tagSlug)
+        public async Task<TagModel> GetTagAsync(string tagSlug)
         {
             TagResponseModel tagRoot = await _apiRequest
                 .AppendPathSegment("tags")
@@ -103,7 +103,7 @@ namespace Philomena.Client.Api
             return tagRoot.Tag;
         }
 
-        public async Task<ImageSearchModel> SearchImages(string query, int? page = null, int? perPage = null, SortField? sortField = null, SortDirection? sortDirection = null, int? filterId = null, string? apiKey = null, int? randomSeed = null)
+        public async Task<ImageSearchModel> SearchImagesAsync(string query, int? page = null, int? perPage = null, SortField? sortField = null, SortDirection? sortDirection = null, int? filterId = null, string? apiKey = null, int? randomSeed = null)
         {
             string? sortFieldParamValue = (sortField is null) ? null : GetSortFieldParamValue(sortField.Value, randomSeed);
             string? sortDirectionParamValue = (sortDirection is null) ? null : GetSortDirectionParamValue(sortDirection.Value);
@@ -120,7 +120,7 @@ namespace Philomena.Client.Api
                 .GetJsonAsync<ImageSearchModel>();
         }
 
-        public async Task<TagSearchModel> SearchTags(string query, int? page, int? perPage)
+        public async Task<TagSearchModel> SearchTagsAsync(string query, int? page, int? perPage)
         {
             return await _apiRequest
                 .AppendPathSegment("search/tags")

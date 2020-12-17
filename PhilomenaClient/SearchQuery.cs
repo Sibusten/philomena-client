@@ -44,7 +44,7 @@ namespace Philomena.Client
             do
             {
                 // Get the current page of images
-                search = await _api.SearchImages(_query, page, _perPage, _sortField, _sortDirection, _filterId, _apiKey, _randomSeed);
+                search = await _api.SearchImagesAsync(_query, page, _perPage, _sortField, _sortDirection, _filterId, _apiKey, _randomSeed);
 
                 if (search.Images is null)
                 {
@@ -72,7 +72,7 @@ namespace Philomena.Client
         public async Task<IImage> GetFirstAsync()
         {
             // Get the first page of images
-            ImageSearchModel search = await _api.SearchImages(_query, page: 1, perPage: 1, _sortField, _sortDirection, _filterId, _apiKey, _randomSeed);
+            ImageSearchModel search = await _api.SearchImagesAsync(_query, page: 1, perPage: 1, _sortField, _sortDirection, _filterId, _apiKey, _randomSeed);
 
             if (search.Images is null)
             {
