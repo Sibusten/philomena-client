@@ -16,6 +16,7 @@ namespace Philomena.Client.Examples
             {
                 new SearchImages(),
                 new DownloadImageToFile(),
+                new EnumerateSearchQuery(),
             };
 
             while (true)
