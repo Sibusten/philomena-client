@@ -8,7 +8,7 @@ namespace Philomena.Client.Examples.Api
 {
     public class SearchImages : IExample
     {
-        public string Description => "Searches for images";
+        public string Description => "Search for images";
 
         private void PrintImageInfo(ImageModel image)
         {

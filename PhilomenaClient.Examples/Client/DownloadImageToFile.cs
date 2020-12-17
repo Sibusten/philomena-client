@@ -5,7 +5,7 @@ namespace Philomena.Client.Examples.Client
 {
     public class DownloadImageToFile : IExample
     {
-        public string Description => "Downloads an image to a file";
+        public string Description => "Download an image to a file";
 
         public async Task RunExample()
         {
