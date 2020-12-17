@@ -9,7 +9,7 @@ namespace Philomena.Client.Examples.Client
 
         public async Task RunExample()
         {
-            PhilomenaClient client = new PhilomenaClient();
+            PhilomenaClient client = new PhilomenaClient("https://derpibooru.org");
             IImage image = await client.Search("fluttershy").GetFirstAsync();
 
             string filename = $"{image.Model.Id}.{image.Model.Format}";

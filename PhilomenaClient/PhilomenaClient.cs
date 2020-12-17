@@ -1,17 +1,22 @@
 ﻿using System;
+using Philomena.Client.Api;
 
 namespace Philomena.Client
 {
     public class PhilomenaClient : IPhilomenaClient
     {
-        public ISearchQuery Search(string query)
+        private PhilomenaApi _api;
+
+        public string? ApiKey { get; set; } = null;
+
+        public PhilomenaClient(string baseUrl)
         {
-            throw new NotImplementedException();
+            _api = new PhilomenaApi(baseUrl);
         }
 
-        ISearchQuery IPhilomenaClient.Search()
+        public ISearchQuery Search(string query)
         {
-            throw new NotImplementedException();
+            return new SearchQuery(_api, query, ApiKey);
         }
     }
 }
