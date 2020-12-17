@@ -1,3 +1,6 @@
+# Ignore downloads from the example app
+ExampleDownloads/
+
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
