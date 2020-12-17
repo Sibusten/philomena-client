@@ -63,20 +63,6 @@ namespace Philomena.Client.Examples
                 Console.WriteLine();
                 await exampleToRun.RunExample();
             }
-
-            return;
-
-
-            PhilomenaClient client = new PhilomenaClient();
-
-            ISearchQuery query = client
-                .Search("fluttershy")
-                .SortBy(SortField.ImageId, SortDirection.Descending);
-
-            await foreach (IImage image in query.EnumerateResultsAsync())
-            {
-                await image.DownloadToFileAsync("filename");
-            }
         }
     }
 }
