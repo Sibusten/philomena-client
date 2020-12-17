@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Philomena.Client.Api;
 using Philomena.Client.Api.Models;
 using Philomena.Client.Examples.Api;
+using Philomena.Client.Examples.Client;
 
 namespace Philomena.Client.Examples
 {
@@ -14,6 +15,7 @@ namespace Philomena.Client.Examples
             List<IExample> examples = new List<IExample>
             {
                 new SearchImages(),
+                new DownloadImageToFile(),
             };
 
             while (true)
