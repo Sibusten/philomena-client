@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Philomena.Client.Api;
@@ -17,6 +17,7 @@ namespace Philomena.Client.Examples
                 new SearchImages(),
                 new DownloadImageToFile(),
                 new EnumerateSearchQuery(),
+                new GetTagsForImage(),
             };
 
             while (true)
