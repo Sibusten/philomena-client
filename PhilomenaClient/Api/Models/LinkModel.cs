@@ -1,5 +1,5 @@
 using System;
-using System.Text.Json.Serialization;
+using Newtonsoft.Json;
 
 namespace Philomena.Client.Api.Models
 {
@@ -8,25 +8,25 @@ namespace Philomena.Client.Api.Models
         /// <summary>
         /// The ID of the user who owns this link.
         /// </summary>
-        [JsonPropertyName("user_id")]
+        [JsonProperty("user_id")]
         public int? UserId { get; set; }
 
         /// <summary>
         /// The creation time, in UTC, of this link.
         /// </summary>
-        [JsonPropertyName("created_at")]
+        [JsonProperty("created_at")]
         public DateTime? CreatedAt { get; set; }
 
         /// <summary>
         /// The state of this link.
         /// </summary>
-        [JsonPropertyName("state")]
+        [JsonProperty("state")]
         public string? State { get; set; }
 
         /// <summary>
         /// The ID of an associated tag for this link. null if no tag linked.
         /// </summary>
-        [JsonPropertyName("tag_id")]
+        [JsonProperty("tag_id")]
         public int? TagId { get; set; }
     }
 }
