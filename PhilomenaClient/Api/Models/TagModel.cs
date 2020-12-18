@@ -33,7 +33,7 @@ namespace Philomena.Client.Api.Models
         /// An array of objects containing DNP entries claimed on the tag.
         /// </summary>
         [JsonProperty("dnp_entries")]
-        public List<int>? DnpEntries { get; set; }
+        public List<DnpEntryModel>? DnpEntries { get; set; }
 
         /// <summary>
         /// The tag's ID.
