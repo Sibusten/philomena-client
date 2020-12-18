@@ -120,7 +120,7 @@ namespace Philomena.Client.Api
                 .GetJsonAsync<ImageSearchModel>();
         }
 
-        public async Task<TagSearchModel> SearchTagsAsync(string query, int? page, int? perPage)
+        public async Task<TagSearchModel> SearchTagsAsync(string query, int? page = null, int? perPage = null)
         {
             return await _apiRequest
                 .AppendPathSegment("search/tags")
