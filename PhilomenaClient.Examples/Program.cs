@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Philomena.Client.Api;
@@ -15,6 +15,7 @@ namespace Philomena.Client.Examples
             List<IExample> examples = new List<IExample>
             {
                 new SearchImages(),
+                new SearchTags(),
                 new DownloadImageToFile(),
                 new EnumerateSearchQuery(),
                 new GetTagsForImage(),
