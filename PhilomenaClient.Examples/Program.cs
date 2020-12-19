@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Philomena.Client.Examples;
+using Sibusten.Philomena.Client.Examples;
 
-namespace Philomena.Client.Examples
+namespace Sibusten.Philomena.Client.Examples
 {
     public class Program
     {

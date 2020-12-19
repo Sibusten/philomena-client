@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Sibusten.Philomena.Api.Models;
 using System.Threading;
 
-namespace Philomena.Client
+namespace Sibusten.Philomena.Client
 {
     public class Image : IImage
     {

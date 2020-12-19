@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Sibusten.Philomena.Api;
 
-namespace Philomena.Client
+namespace Sibusten.Philomena.Client
 {
     public interface ISearchQuery
     {

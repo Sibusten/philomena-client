@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Sibusten.Philomena.Api.Models;
 
-namespace Philomena.Client
+namespace Sibusten.Philomena.Client
 {
     public interface IPhilomenaClient
     {

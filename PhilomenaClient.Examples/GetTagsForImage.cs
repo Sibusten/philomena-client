@@ -2,7 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Sibusten.Philomena.Api.Models;
 
-namespace Philomena.Client.Examples
+namespace Sibusten.Philomena.Client.Examples
 {
     public class GetTagsForImage : IExample
     {

@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace Philomena.Client.Examples
+namespace Sibusten.Philomena.Client.Examples
 {
     public interface IExample
     {
