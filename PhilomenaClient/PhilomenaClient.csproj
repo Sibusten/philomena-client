@@ -6,7 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Nullforce.Api.Derpibooru.JsonModels" Version="0.1.1-ci0005" />
     <PackageReference Include="Sibusten.Philomena.Api" Version="1.0.0-alpha1" />
   </ItemGroup>
 
