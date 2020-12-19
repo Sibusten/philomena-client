@@ -1,0 +1,28 @@
+language: csharp
+solution: PhilomenaClient.sln
+mono: none
+dotnet: 5.0.101
+os: linux
+dist: xenial
+
+env:
+  - CONFIGURATION=Debug
+  - CONFIGURATION=Release
+
+install:
+  - dotnet restore
+
+script:
+  - dotnet build --no-restore -c $CONFIGURATION
+
+after_success:
+  - dotnet test --no-build --verbosity normal
+
+before_deploy:
+  - dotnet pack ./PhilomenaClient/PhilomenaClient.csproj -c Release
+
+deploy:
+  on:
+    tags: true
+  provider: script
+  script: dotnet nuget push ./PhilomenaClient/bin/Release/Sibusten.PhilomenaClient.*.nupkg -k $NUGET_API_KEY -s https://api.nuget.org/v3/index.json
