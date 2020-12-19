@@ -1,7 +1,7 @@
 using System.IO;
 using System.Threading.Tasks;
 
-namespace Philomena.Client.Examples.Client
+namespace Philomena.Client.Examples
 {
     public class EnumerateSearchQuery : IExample
     {

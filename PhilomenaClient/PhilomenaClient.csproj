@@ -6,9 +6,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Flurl" Version="3.0.0" />
-    <PackageReference Include="Flurl.Http" Version="3.0.0" />
     <PackageReference Include="Nullforce.Api.Derpibooru.JsonModels" Version="0.1.1-ci0005" />
+    <PackageReference Include="Sibusten.Philomena.Api" Version="1.0.0-alpha1" />
   </ItemGroup>
 
 </Project>

@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Philomena.Client.Api;
-using Philomena.Client.Api.Models;
-using Philomena.Client.Examples.Api;
-using Philomena.Client.Examples.Client;
+using Philomena.Client.Examples;
 
 namespace Philomena.Client.Examples
 {
@@ -14,8 +11,6 @@ namespace Philomena.Client.Examples
         {
             List<IExample> examples = new List<IExample>
             {
-                new SearchImages(),
-                new SearchTags(),
                 new DownloadImageToFile(),
                 new EnumerateSearchQuery(),
                 new GetTagsForImage(),

@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Philomena.Client.Api;
+using Sibusten.Philomena.Api;
 
 namespace Philomena.Client
 {

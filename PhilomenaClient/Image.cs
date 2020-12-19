@@ -3,7 +3,7 @@ using Flurl.Http;
 using System;
 using System.IO;
 using System.Threading.Tasks;
-using Philomena.Client.Api.Models;
+using Sibusten.Philomena.Api.Models;
 using System.Threading;
 
 namespace Philomena.Client

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Philomena.Client.Api;
-using Philomena.Client.Api.Models;
+using Sibusten.Philomena.Api;
+using Sibusten.Philomena.Api.Models;
 
 namespace Philomena.Client
 {

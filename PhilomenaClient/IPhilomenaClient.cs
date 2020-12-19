@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using Philomena.Client.Api.Models;
+using Sibusten.Philomena.Api.Models;
 
 namespace Philomena.Client
 {
