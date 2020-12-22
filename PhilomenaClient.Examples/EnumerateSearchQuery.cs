@@ -12,7 +12,7 @@ namespace Sibusten.Philomena.Client.Examples
             PhilomenaClient client = new PhilomenaClient("https://derpibooru.org");
             ISearchQuery query = client.Search("fluttershy").Limit(10);
 
-            await foreach(IImage image in query.EnumerateResultsAsync())
+            await foreach(IPhilomenaImage image in query.EnumerateResultsAsync())
             {
                 string filename = $"ExampleDownloads/EnumerateSearchQuery/{image.Model.Id}.{image.Model.Format}";
                 FileInfo file = new FileInfo(filename);

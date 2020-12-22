@@ -5,7 +5,7 @@ using Sibusten.Philomena.Api.Models;
 
 namespace Sibusten.Philomena.Client
 {
-    public interface IImage
+    public interface IPhilomenaImage
     {
         /// <summary>
         /// The image model for this image

@@ -32,12 +32,12 @@ namespace Sibusten.Philomena.Client
         /// Enumerates over the results of the query
         /// </summary>
         /// <returns>The search query</returns>
-        IAsyncEnumerable<IImage> EnumerateResultsAsync();
+        IAsyncEnumerable<IPhilomenaImage> EnumerateResultsAsync();
 
         /// <summary>
         /// Gets the first image in the query
         /// </summary>
         /// <returns>The first image in the query</returns>
-        Task<IImage> GetFirstAsync();
+        Task<IPhilomenaImage> GetFirstAsync();
     }
 }

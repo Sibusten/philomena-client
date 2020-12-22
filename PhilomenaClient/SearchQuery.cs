@@ -28,7 +28,7 @@ namespace Sibusten.Philomena.Client
             _apiKey = apiKey;
         }
 
-        public async IAsyncEnumerable<IImage> EnumerateResultsAsync()
+        public async IAsyncEnumerable<IPhilomenaImage> EnumerateResultsAsync()
         {
             // TODO: Optimize this process and make use of multiple threads
             // TODO: Enumerate using id.gt/id.lt when possible
@@ -59,7 +59,7 @@ namespace Sibusten.Philomena.Client
                         yield break;
                     }
 
-                    yield return new Image(imageModel);
+                    yield return new PhilomenaImage(imageModel);
                     imagesProcessed++;
                 }
 
@@ -69,7 +69,7 @@ namespace Sibusten.Philomena.Client
             while (search.Images.Any());  // Stop when there are no more images
         }
 
-        public async Task<IImage> GetFirstAsync()
+        public async Task<IPhilomenaImage> GetFirstAsync()
         {
             // Get the first page of images
             ImageSearchModel search = await _api.SearchImagesAsync(_query, page: 1, perPage: 1, _sortField, _sortDirection, _filterId, _apiKey, _randomSeed);
@@ -84,7 +84,7 @@ namespace Sibusten.Philomena.Client
                 throw new InvalidOperationException("The search query resulted in 0 images");
             }
 
-            return new Image(search.Images.First());
+            return new PhilomenaImage(search.Images.First());
         }
 
         public ISearchQuery Limit(int maxImages)

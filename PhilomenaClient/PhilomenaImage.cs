@@ -8,11 +8,11 @@ using System.Threading;
 
 namespace Sibusten.Philomena.Client
 {
-    public class Image : IImage
+    public class PhilomenaImage : IPhilomenaImage
     {
         public ImageModel Model { get; init; }
 
-        public Image(ImageModel model)
+        public PhilomenaImage(ImageModel model)
         {
             Model = model;
         }
