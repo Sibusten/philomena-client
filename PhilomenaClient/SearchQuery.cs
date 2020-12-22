@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Sibusten.Philomena.Api;
@@ -113,6 +114,15 @@ namespace Sibusten.Philomena.Client
             _filterId = filterId;
 
             return this;
+        }
+
+        public async Task DownloadAllAsync(GetFileForImageDelegate getFileForImage)
+        {
+            await foreach(IPhilomenaImage image in EnumerateResultsAsync())
+            {
+                FileInfo imageFile = getFileForImage(image);
+                await image.DownloadToFileAsync(imageFile);
+            }
         }
     }
 }

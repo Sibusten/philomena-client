@@ -1,9 +1,17 @@
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Sibusten.Philomena.Api;
 
 namespace Sibusten.Philomena.Client
 {
+    /// <summary>
+    /// A delegate that determines which file to save an image to
+    /// </summary>
+    /// <param name="image">The image being downloaded</param>
+    /// <returns>The file to download the image to</returns>
+    public delegate FileInfo GetFileForImageDelegate(IPhilomenaImage image);
+
     public interface ISearchQuery
     {
         /// <summary>
@@ -39,5 +47,11 @@ namespace Sibusten.Philomena.Client
         /// </summary>
         /// <returns>The first image in the query</returns>
         Task<IPhilomenaImage> GetFirstAsync();
+
+        /// <summary>
+        /// Downloads all images in the query
+        /// </summary>
+        /// <param name="getFileForImage">A delegate that returns the file to download each image to</param>
+        Task DownloadAllAsync(GetFileForImageDelegate getFileForImage);
     }
 }
