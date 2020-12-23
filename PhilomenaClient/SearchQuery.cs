@@ -19,6 +19,7 @@ namespace Sibusten.Philomena.Client
         private SortDirection? _sortDirection = null;
         private int? _randomSeed = null;
         private int? _filterId = null;
+        private List<ShouldProcessImageDelegate> _customConditions = new();
 
         private const int _perPage = 50;
 
@@ -27,6 +28,24 @@ namespace Sibusten.Philomena.Client
             _api = api;
             _query = query;
             _apiKey = apiKey;
+        }
+
+        /// <summary>
+        /// Evaluates the custom conditions and determines whether an image should be processed
+        /// </summary>
+        /// <param name="image">The image being considered</param>
+        /// <returns>True if the image should be processed</returns>
+        private bool CustomConditionsPass(IPhilomenaImage image)
+        {
+            foreach (ShouldProcessImageDelegate shouldProcessImage in _customConditions)
+            {
+                if (!shouldProcessImage(image))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         public async IAsyncEnumerable<IPhilomenaImage> EnumerateResultsAsync()
@@ -60,7 +79,16 @@ namespace Sibusten.Philomena.Client
                         yield break;
                     }
 
-                    yield return new PhilomenaImage(imageModel);
+                    IPhilomenaImage image = new PhilomenaImage(imageModel);
+
+                    // Check custom conditions
+                    if (!CustomConditionsPass(image))
+                    {
+                        // Skip this image
+                        continue;
+                    }
+
+                    yield return image;
                     imagesProcessed++;
                 }
 
@@ -112,6 +140,13 @@ namespace Sibusten.Philomena.Client
         public ISearchQuery WithFilter(int filterId)
         {
             _filterId = filterId;
+
+            return this;
+        }
+
+        public ISearchQuery AddCustomCondition(ShouldProcessImageDelegate shouldProcessImage)
+        {
+            _customConditions.Add(shouldProcessImage);
 
             return this;
         }
