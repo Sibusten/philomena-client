@@ -100,20 +100,12 @@ namespace Sibusten.Philomena.Client
 
         public async Task<IPhilomenaImage> GetFirstAsync()
         {
-            // Get the first page of images
-            ImageSearchModel search = await _api.SearchImagesAsync(_query, page: 1, perPage: 1, _sortField, _sortDirection, _filterId, _apiKey, _randomSeed);
-
-            if (search.Images is null)
+            await foreach (IPhilomenaImage image in EnumerateResultsAsync())
             {
-                throw new InvalidOperationException("The search query did not provide a list of images");
+                return image;
             }
 
-            if (!search.Images.Any())
-            {
-                throw new InvalidOperationException("The search query resulted in 0 images");
-            }
-
-            return new PhilomenaImage(search.Images.First());
+            throw new InvalidOperationException("The search query resulted in 0 images");
         }
 
         public ISearchQuery Limit(int maxImages)
