@@ -21,7 +21,6 @@ namespace Sibusten.Philomena.Client
         private SortDirection? _sortDirection = null;
         private int? _randomSeed = null;
         private int? _filterId = null;
-        private List<ShouldProcessImageDelegate> _customConditions = new();
 
         private const int _perPage = 50;
 
@@ -30,24 +29,6 @@ namespace Sibusten.Philomena.Client
             _api = api;
             _query = query;
             _apiKey = apiKey;
-        }
-
-        /// <summary>
-        /// Evaluates the custom conditions and determines whether an image should be processed
-        /// </summary>
-        /// <param name="image">The image being considered</param>
-        /// <returns>True if the image should be processed</returns>
-        private bool CustomConditionsPass(IPhilomenaImage image)
-        {
-            foreach (ShouldProcessImageDelegate shouldProcessImage in _customConditions)
-            {
-                if (!shouldProcessImage(image))
-                {
-                    return false;
-                }
-            }
-
-            return true;
         }
 
         public async IAsyncEnumerable<IPhilomenaImage> EnumerateResultsAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
@@ -82,13 +63,6 @@ namespace Sibusten.Philomena.Client
                     }
 
                     IPhilomenaImage image = new PhilomenaImage(imageModel);
-
-                    // Check custom conditions
-                    if (!CustomConditionsPass(image))
-                    {
-                        // Skip this image
-                        continue;
-                    }
 
                     yield return image;
                     imagesProcessed++;
@@ -138,16 +112,17 @@ namespace Sibusten.Philomena.Client
             return this;
         }
 
-        public ISearchQuery AddCustomCondition(ShouldProcessImageDelegate shouldProcessImage)
-        {
-            _customConditions.Add(shouldProcessImage);
-
-            return this;
-        }
-
         public async Task DownloadAllAsync(GetFileForImageDelegate getFileForImage, CancellationToken cancellationToken = default)
         {
-            await foreach(IPhilomenaImage image in EnumerateResultsAsync(cancellationToken))
+            // Run the filtered download with a filter that does nothing
+            await DownloadAllAsync(getFileForImage, i => i, cancellationToken);
+        }
+
+        public async Task DownloadAllAsync(GetFileForImageDelegate getFileForImage, FilterImagesDelegate filterImages, CancellationToken cancellationToken = default)
+        {
+            IAsyncEnumerable<IPhilomenaImage> imageEnumerable = filterImages(EnumerateResultsAsync(cancellationToken));
+
+            await foreach(IPhilomenaImage image in imageEnumerable)
             {
                 FileInfo imageFile = getFileForImage(image);
                 await image.DownloadToFileAsync(imageFile, cancellationToken);

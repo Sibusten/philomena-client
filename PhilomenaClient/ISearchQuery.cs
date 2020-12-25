@@ -14,11 +14,11 @@ namespace Sibusten.Philomena.Client
     public delegate FileInfo GetFileForImageDelegate(IPhilomenaImage image);
 
     /// <summary>
-    /// A delegate that determines whether an image should be processed
+    /// A delegate that filters an async image enumerable
     /// </summary>
-    /// <param name="image">The image being considered</param>
-    /// <returns>True if the image should be processed</returns>
-    public delegate bool ShouldProcessImageDelegate(IPhilomenaImage image);
+    /// <param name="imageEnumerable">The input image enumerable</param>
+    /// <returns>The filtered image enumerable</returns>
+    public delegate IAsyncEnumerable<IPhilomenaImage> FilterImagesDelegate(IAsyncEnumerable<IPhilomenaImage> imageEnumerable);
 
     public interface ISearchQuery
     {
@@ -45,13 +45,6 @@ namespace Sibusten.Philomena.Client
         ISearchQuery Limit(int maxImages);
 
         /// <summary>
-        /// Adds a custom condition to determine whether an image should be processed.
-        /// </summary>
-        /// <param name="shouldProcessImage">A delegate that specifies the condition that must pass to process the image</param>
-        /// <remarks>Note: many conditions can be specified directly and provide better performance if done that way. Only use this if the condition cannot be added otherwise.</remarks>
-        ISearchQuery AddCustomCondition(ShouldProcessImageDelegate shouldProcessImage);
-
-        /// <summary>
         /// Enumerates over the results of the query
         /// </summary>
         /// <returns>The search query</returns>
@@ -68,5 +61,13 @@ namespace Sibusten.Philomena.Client
         /// </summary>
         /// <param name="getFileForImage">A delegate that returns the file to download each image to</param>
         Task DownloadAllAsync(GetFileForImageDelegate getFileForImage, CancellationToken cancellationToken = default);
+
+        /// <summary>
+        /// Downloads all images in the query that pass a custom filter
+        /// </summary>
+        /// <param name="getFileForImage">A delegate that returns the file to download each image to</param>
+        /// <param name="filterImages">A delegate that allows a custom filter on the images downloaded</param>
+        /// <remarks>Note: many conditions can be specified directly and provide better performance if done that way. Only use the custom filter if the condition cannot be added otherwise.</remarks>
+        Task DownloadAllAsync(GetFileForImageDelegate getFileForImage, FilterImagesDelegate filterImages, CancellationToken cancellationToken = default);
     }
 }
