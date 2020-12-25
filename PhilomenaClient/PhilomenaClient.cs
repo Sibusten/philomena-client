@@ -17,9 +17,9 @@ namespace Sibusten.Philomena.Client
             _api = new PhilomenaApi(baseUrl);
         }
 
-        public ISearchQuery Search(string query)
+        public IPhilomenaImageSearchQuery Search(string query)
         {
-            return new SearchQuery(_api, query, ApiKey);
+            return new PhilomenaImageSearchQuery(_api, query, ApiKey);
         }
 
         public async Task<TagModel> GetTagById(int tagId)

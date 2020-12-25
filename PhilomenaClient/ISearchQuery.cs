@@ -20,14 +20,14 @@ namespace Sibusten.Philomena.Client
     /// <returns>The filtered image enumerable</returns>
     public delegate IAsyncEnumerable<IPhilomenaImage> FilterImagesDelegate(IAsyncEnumerable<IPhilomenaImage> imageEnumerable);
 
-    public interface ISearchQuery
+    public interface IPhilomenaImageSearchQuery
     {
         /// <summary>
         /// Sets the filter for the query
         /// </summary>
         /// <param name="filterId">The ID of the filter to use</param>
         /// <returns>The search query</returns>
-        ISearchQuery WithFilter(int filterId);
+        IPhilomenaImageSearchQuery WithFilter(int filterId);
 
         /// <summary>
         /// Sets the sort order for the query
@@ -35,21 +35,21 @@ namespace Sibusten.Philomena.Client
         /// <param name="sortField">The field to sort by</param>
         /// <param name="sortDirection">The direction to sort by</param>
         /// <returns>The search query</returns>
-        ISearchQuery SortBy(SortField sortField, SortDirection sortDirection);
+        IPhilomenaImageSearchQuery SortBy(SortField sortField, SortDirection sortDirection);
 
         /// <summary>
         /// Limits the number of images queried
         /// </summary>
         /// <param name="maxImages">The maximum number of images to query</param>
         /// <returns>The search query</returns>
-        ISearchQuery Limit(int maxImages);
+        IPhilomenaImageSearchQuery Limit(int maxImages);
 
         /// <summary>
         /// Sets the maximum threads to use when downloading images
         /// </summary>
         /// <param name="maxDownloadThreads">The maximum threads to use when downloading images</param>
         /// <returns>The search query</returns>
-        ISearchQuery WithMaxDownloadThreads(int maxDownloadThreads);
+        IPhilomenaImageSearchQuery WithMaxDownloadThreads(int maxDownloadThreads);
 
         /// <summary>
         /// Enumerates over the results of the query

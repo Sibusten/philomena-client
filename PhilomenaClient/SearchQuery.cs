@@ -11,7 +11,7 @@ using Sibusten.Philomena.Api.Models;
 
 namespace Sibusten.Philomena.Client
 {
-    public class SearchQuery : ISearchQuery
+    public class PhilomenaImageSearchQuery : IPhilomenaImageSearchQuery
     {
         private readonly PhilomenaApi _api;
         private readonly string _query;
@@ -26,7 +26,7 @@ namespace Sibusten.Philomena.Client
 
         private const int _perPage = 50;
 
-        public SearchQuery(PhilomenaApi api, string query, string? apiKey = null)
+        public PhilomenaImageSearchQuery(PhilomenaApi api, string query, string? apiKey = null)
         {
             _api = api;
             _query = query;
@@ -86,14 +86,14 @@ namespace Sibusten.Philomena.Client
             throw new InvalidOperationException("The search query resulted in 0 images");
         }
 
-        public ISearchQuery Limit(int maxImages)
+        public IPhilomenaImageSearchQuery Limit(int maxImages)
         {
             _limit = maxImages;
 
             return this;
         }
 
-        public ISearchQuery SortBy(SortField sortField, SortDirection sortDirection)
+        public IPhilomenaImageSearchQuery SortBy(SortField sortField, SortDirection sortDirection)
         {
             _sortField = sortField;
             _sortDirection = sortDirection;
@@ -107,14 +107,14 @@ namespace Sibusten.Philomena.Client
             return this;
         }
 
-        public ISearchQuery WithFilter(int filterId)
+        public IPhilomenaImageSearchQuery WithFilter(int filterId)
         {
             _filterId = filterId;
 
             return this;
         }
 
-        public ISearchQuery WithMaxDownloadThreads(int maxDownloadThreads)
+        public IPhilomenaImageSearchQuery WithMaxDownloadThreads(int maxDownloadThreads)
         {
             _maxDownloadThreads = maxDownloadThreads;
 

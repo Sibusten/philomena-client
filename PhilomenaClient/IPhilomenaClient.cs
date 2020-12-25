@@ -10,7 +10,7 @@ namespace Sibusten.Philomena.Client
         /// </summary>
         /// <param name="query">The search query</param>
         /// <returns></returns>
-        ISearchQuery Search(string query);
+        IPhilomenaImageSearchQuery Search(string query);
 
         /// <summary>
         /// Gets a tag by its ID
