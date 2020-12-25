@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Dasync.Collections;
 using Sibusten.Philomena.Api;
 using Sibusten.Philomena.Api.Models;
 
@@ -21,6 +22,7 @@ namespace Sibusten.Philomena.Client
         private SortDirection? _sortDirection = null;
         private int? _randomSeed = null;
         private int? _filterId = null;
+        private int _maxDownloadThreads = 1;
 
         private const int _perPage = 50;
 
@@ -112,6 +114,13 @@ namespace Sibusten.Philomena.Client
             return this;
         }
 
+        public ISearchQuery WithMaxDownloadThreads(int maxDownloadThreads)
+        {
+            _maxDownloadThreads = maxDownloadThreads;
+
+            return this;
+        }
+
         public async Task DownloadAllAsync(GetFileForImageDelegate getFileForImage, CancellationToken cancellationToken = default)
         {
             // Run the filtered download with a filter that does nothing
@@ -120,13 +129,17 @@ namespace Sibusten.Philomena.Client
 
         public async Task DownloadAllAsync(GetFileForImageDelegate getFileForImage, FilterImagesDelegate filterImages, CancellationToken cancellationToken = default)
         {
+            // Filter the images using the custom filter
             IAsyncEnumerable<IPhilomenaImage> imageEnumerable = filterImages(EnumerateResultsAsync(cancellationToken));
 
-            await foreach(IPhilomenaImage image in imageEnumerable)
+            // Download the images using as many threads as configured
+            await imageEnumerable.ParallelForEachAsync(async (IPhilomenaImage image) =>
             {
                 FileInfo imageFile = getFileForImage(image);
                 await image.DownloadToFileAsync(imageFile, cancellationToken);
-            }
+            },
+            maxDegreeOfParallelism: _maxDownloadThreads,
+            cancellationToken: cancellationToken);
         }
     }
 }

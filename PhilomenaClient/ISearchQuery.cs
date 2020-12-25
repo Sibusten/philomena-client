@@ -45,6 +45,13 @@ namespace Sibusten.Philomena.Client
         ISearchQuery Limit(int maxImages);
 
         /// <summary>
+        /// Sets the maximum threads to use when downloading images
+        /// </summary>
+        /// <param name="maxDownloadThreads">The maximum threads to use when downloading images</param>
+        /// <returns>The search query</returns>
+        ISearchQuery WithMaxDownloadThreads(int maxDownloadThreads);
+
+        /// <summary>
         /// Enumerates over the results of the query
         /// </summary>
         /// <returns>The search query</returns>

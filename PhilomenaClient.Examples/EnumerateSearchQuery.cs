@@ -29,6 +29,13 @@ namespace Sibusten.Philomena.Client.Examples
 
                 await image.DownloadToFileAsync(file);
             }
+
+            // Downloading with multiple threads
+            await client
+                .Search("fluttershy")
+                .Limit(100)
+                .WithMaxDownloadThreads(8)
+                .DownloadAllAsync(GetFileForImage);
         }
 
         private FileInfo GetFileForImage(IPhilomenaImage image)
