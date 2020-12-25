@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using Sibusten.Philomena.Api;
 
@@ -54,7 +55,7 @@ namespace Sibusten.Philomena.Client
         /// Enumerates over the results of the query
         /// </summary>
         /// <returns>The search query</returns>
-        IAsyncEnumerable<IPhilomenaImage> EnumerateResultsAsync();
+        IAsyncEnumerable<IPhilomenaImage> EnumerateResultsAsync(CancellationToken cancellationToken = default);
 
         /// <summary>
         /// Gets the first image in the query
@@ -66,6 +67,6 @@ namespace Sibusten.Philomena.Client
         /// Downloads all images in the query
         /// </summary>
         /// <param name="getFileForImage">A delegate that returns the file to download each image to</param>
-        Task DownloadAllAsync(GetFileForImageDelegate getFileForImage);
+        Task DownloadAllAsync(GetFileForImageDelegate getFileForImage, CancellationToken cancellationToken = default);
     }
 }

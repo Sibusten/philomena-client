@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Sibusten.Philomena.Api;
 using Sibusten.Philomena.Api.Models;
@@ -48,7 +50,7 @@ namespace Sibusten.Philomena.Client
             return true;
         }
 
-        public async IAsyncEnumerable<IPhilomenaImage> EnumerateResultsAsync()
+        public async IAsyncEnumerable<IPhilomenaImage> EnumerateResultsAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             // TODO: Optimize this process and make use of multiple threads
             // TODO: Enumerate using id.gt/id.lt when possible
@@ -143,12 +145,12 @@ namespace Sibusten.Philomena.Client
             return this;
         }
 
-        public async Task DownloadAllAsync(GetFileForImageDelegate getFileForImage)
+        public async Task DownloadAllAsync(GetFileForImageDelegate getFileForImage, CancellationToken cancellationToken = default)
         {
-            await foreach(IPhilomenaImage image in EnumerateResultsAsync())
+            await foreach(IPhilomenaImage image in EnumerateResultsAsync(cancellationToken))
             {
                 FileInfo imageFile = getFileForImage(image);
-                await image.DownloadToFileAsync(imageFile);
+                await image.DownloadToFileAsync(imageFile, cancellationToken);
             }
         }
     }
