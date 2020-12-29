@@ -1,3 +1,4 @@
+using static Dasync.Collections.ParallelForEachExtensions;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -5,7 +6,6 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Dasync.Collections;
 using Sibusten.Philomena.Api;
 using Sibusten.Philomena.Api.Models;
 
@@ -78,12 +78,13 @@ namespace Sibusten.Philomena.Client
 
         public async Task<IPhilomenaImage> GetFirstAsync()
         {
-            await foreach (IPhilomenaImage image in EnumerateResultsAsync())
-            {
-                return image;
+            IPhilomenaImage? firstImage = await EnumerateResultsAsync().FirstOrDefaultAsync();
+
+            if (firstImage is null) {
+                throw new InvalidOperationException("The search query resulted in 0 images");
             }
 
-            throw new InvalidOperationException("The search query resulted in 0 images");
+            return firstImage;
         }
 
         public IPhilomenaImageSearchQuery Limit(int maxImages)
