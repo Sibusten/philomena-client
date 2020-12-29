@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhilomenaClient", "PhilomenaClient\PhilomenaClient.csproj", "{EDECC44E-0A14-41E9-A459-358C356E3F7E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sibusten.Philomena.Client", "Sibusten.Philomena.Client\Sibusten.Philomena.Client.csproj", "{EDECC44E-0A14-41E9-A459-358C356E3F7E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhilomenaClient.Examples", "PhilomenaClient.Examples\PhilomenaClient.Examples.csproj", "{0528C856-F929-4ED6-A9BD-0CBFC4BF9DB5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sibusten.Philomena.Client.Examples", "Sibusten.Philomena.Client.Examples\Sibusten.Philomena.Client.Examples.csproj", "{0528C856-F929-4ED6-A9BD-0CBFC4BF9DB5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
