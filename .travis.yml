@@ -5,25 +5,31 @@ dotnet: 5.0.101
 os: linux
 dist: xenial
 
-env:
-  - CONFIGURATION=Debug
-  - CONFIGURATION=Release
+# Define reusable jobs
 
-install:
-  - dotnet restore
+_test_job: &test_job
+  stage: "Test"
+  script: dotnet test -c $CONFIGURATION
 
-script:
-  - dotnet build --no-restore -c $CONFIGURATION
+_deploy_job: &deploy_job
+  stage: "Deploy"
+  if: tag IS present
+  script: dotnet pack ./Sibusten.Philomena.Client/Sibusten.Philomena.Client.csproj -c $CONFIGURATION
+  deploy:
+    on:
+      tags: true
+    provider: script
+    edge: true
+    script: dotnet nuget push ./Sibusten.Philomena.Client/bin/$CONFIGURATION/Sibusten.Philomena.Client.*.nupkg -k $NUGET_API_KEY -s https://api.nuget.org/v3/index.json
 
-after_success:
-  - dotnet test --no-build --verbosity normal
+# Specify jobs to run
 
-before_deploy:
-  - dotnet pack ./Sibusten.Philomena.Client/Sibusten.Philomena.Client.csproj -c Release
+jobs:
+  include:
+    - <<: *test_job
+      env: CONFIGURATION=Debug
+    - <<: *test_job
+      env: CONFIGURATION=Release
 
-deploy:
-  on:
-    tags: true
-  provider: script
-  edge: true
-  script: dotnet nuget push ./Sibusten.Philomena.Client/bin/Release/Sibusten.Philomena.Client.*.nupkg -k $NUGET_API_KEY -s https://api.nuget.org/v3/index.json
+    - <<: *deploy_job
+      env: CONFIGURATION=Release  # Only deploy with release configuration
