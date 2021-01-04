@@ -122,13 +122,13 @@ namespace Sibusten.Philomena.Client
             return this;
         }
 
-        public async Task DownloadAllAsync(GetFileForImageDelegate getFileForImage, CancellationToken cancellationToken = default)
+        public async Task DownloadAllAsync(GetStreamForImageDelegate getStreamForImage, bool leaveOpen = false, CancellationToken cancellationToken = default)
         {
             // Run the filtered download with a filter that does nothing
-            await DownloadAllAsync(getFileForImage, i => i, cancellationToken);
+            await DownloadAllAsync(getStreamForImage, leaveOpen, i => i, cancellationToken);
         }
 
-        public async Task DownloadAllAsync(GetFileForImageDelegate getFileForImage, FilterImagesDelegate filterImages, CancellationToken cancellationToken = default)
+        public async Task DownloadAllAsync(GetStreamForImageDelegate getStreamForImage, bool leaveOpen, FilterImagesDelegate filterImages, CancellationToken cancellationToken = default)
         {
             // Filter the images using the custom filter
             IAsyncEnumerable<IPhilomenaImage> imageEnumerable = filterImages(EnumerateResultsAsync(cancellationToken));
@@ -136,11 +136,45 @@ namespace Sibusten.Philomena.Client
             // Download the images using as many threads as configured
             await imageEnumerable.ParallelForEachAsync(async (IPhilomenaImage image) =>
             {
-                FileInfo imageFile = getFileForImage(image);
-                await image.DownloadToFileAsync(imageFile, cancellationToken);
+                Stream imageStream = getStreamForImage(image);
+                try
+                {
+                    await image.DownloadToAsync(imageStream, cancellationToken);
+                }
+                finally
+                {
+                    if (!leaveOpen)
+                    {
+                        // Dispose of (and close) the stream
+                        imageStream?.Dispose();
+                    }
+                }
             },
             maxDegreeOfParallelism: _maxDownloadThreads,
             cancellationToken: cancellationToken);
+        }
+
+        public async Task DownloadAllToFilesAsync(GetFileForImageDelegate getFileForImage, CancellationToken cancellationToken = default)
+        {
+            // Run the filtered download with a filter that does nothing
+            await DownloadAllToFilesAsync(getFileForImage, i => i, cancellationToken);
+        }
+
+        public async Task DownloadAllToFilesAsync(GetFileForImageDelegate getFileForImage, FilterImagesDelegate filterImages, CancellationToken cancellationToken = default)
+        {
+            // Run the stream downloader with a delegate that gets a stream from the image. Make sure the stream is closed.
+            await DownloadAllAsync(image =>
+            {
+                FileInfo imageFile = getFileForImage(image);
+
+                // Create directory
+                Directory.CreateDirectory(imageFile.DirectoryName);
+
+                return imageFile.OpenWrite();
+            },
+            leaveOpen: false,
+            filterImages,
+            cancellationToken);
         }
     }
 }
