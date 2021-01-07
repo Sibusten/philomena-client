@@ -165,12 +165,17 @@ namespace Sibusten.Philomena.Client
             // Run the stream downloader with a delegate that gets a stream from the image. Make sure the stream is closed.
             await DownloadAllAsync(image =>
             {
-                FileInfo imageFile = getFileForImage(image);
+                string imageFile = getFileForImage(image);
 
                 // Create directory
-                Directory.CreateDirectory(imageFile.DirectoryName);
+                string? imageDirectory = Path.GetDirectoryName(imageFile);
+                if (imageDirectory is null)
+                {
+                    throw new ArgumentException("The file does not have a parent directory", nameof(getFileForImage));
+                }
+                Directory.CreateDirectory(imageDirectory);
 
-                return imageFile.OpenWrite();
+                return File.OpenWrite(imageFile);
             },
             leaveOpen: false,
             filterImages,

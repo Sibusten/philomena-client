@@ -15,7 +15,7 @@ namespace Sibusten.Philomena.Client.Examples
             IPhilomenaImageSearchQuery query = client.Search("fluttershy").Limit(10);
 
             // Using download all method
-            await query.DownloadAllToFilesAsync(image => new FileInfo($"ExampleDownloads/EnumerateSearchQuery/{image.Model.Id}.{image.Model.Format}"));
+            await query.DownloadAllToFilesAsync(image => $"ExampleDownloads/EnumerateSearchQuery/{image.Model.Id}.{image.Model.Format}");
 
             // Using a delegate method and a custom filter to skip images already downloaded
             // Note that using direct query filtering methods are preferred since they will provide better performance. Don't use the custom filter for conditions like image score.
@@ -38,18 +38,18 @@ namespace Sibusten.Philomena.Client.Examples
                 .DownloadAllToFilesAsync(GetFileForImage);
         }
 
-        private FileInfo GetFileForImage(IPhilomenaImage image)
+        private string GetFileForImage(IPhilomenaImage image)
         {
             // A custom file naming scheme could be used here to generate file names
-            return new FileInfo($"ExampleDownloads/EnumerateSearchQuery/{image.Model.Id}.{image.Model.Format}");
+            return $"ExampleDownloads/EnumerateSearchQuery/{image.Model.Id}.{image.Model.Format}";
         }
 
         private bool ImageExists(IPhilomenaImage image)
         {
             // Exclude images already downloaded.
             // This is a simple way of determining this that will fail if file names are not the same each download. A database could be used here instead.
-            FileInfo imageFile = GetFileForImage(image);
-            return imageFile.Exists;
+            string imageFile = GetFileForImage(image);
+            return File.Exists(imageFile);
         }
 
         private IAsyncEnumerable<IPhilomenaImage> FilterImagesAlreadyDownloaded(IAsyncEnumerable<IPhilomenaImage> imageEnumerable)

@@ -11,7 +11,7 @@ namespace Sibusten.Philomena.Client
     /// </summary>
     /// <param name="image">The image being downloaded</param>
     /// <returns>The file to download the image to</returns>
-    public delegate FileInfo GetFileForImageDelegate(IPhilomenaImage image);
+    public delegate string GetFileForImageDelegate(IPhilomenaImage image);
 
     /// <summary>
     /// A delegate that determines which stream to save an image to
