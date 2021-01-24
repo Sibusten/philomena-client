@@ -33,7 +33,7 @@ namespace Sibusten.Philomena.Client
             _apiKey = apiKey;
         }
 
-        public async IAsyncEnumerable<IPhilomenaImage> EnumerateResultsAsync([EnumeratorCancellation] CancellationToken cancellationToken = default)
+        public async IAsyncEnumerable<IPhilomenaImage> EnumerateResultsAsync([EnumeratorCancellation] CancellationToken cancellationToken = default, IProgress<MetadataDownloadProgressInfo>? progress = null)
         {
             // TODO: Optimize this process and make use of multiple threads
             // TODO: Enumerate using id.gt/id.lt when possible
@@ -54,6 +54,32 @@ namespace Sibusten.Philomena.Client
                 if (search.Images is null)
                 {
                     throw new InvalidOperationException("The search query did not provide a list of images");
+                }
+
+                // Update metadata progress if given
+                if (progress is not null)
+                {
+                    if (search.Total is null)
+                    {
+                        throw new InvalidOperationException("The search query did not provide a total image count");
+                    }
+
+                    // Determine how much metadata has been downloaded
+                    int metadataDownloaded = imagesProcessed + search.Images.Count;
+
+                    // Cap the total number of images downloaded at the limit
+                    int totalImagesToDownload = Math.Min(search.Total.Value, _limit);
+
+                    // Avoid reporting more metadata downloaded than total images to download
+                    metadataDownloaded = Math.Min(metadataDownloaded, totalImagesToDownload);
+
+                    // Update progress
+                    MetadataDownloadProgressInfo progressInfo = new MetadataDownloadProgressInfo()
+                    {
+                        Downloaded = metadataDownloaded,
+                        Total = totalImagesToDownload
+                    };
+                    progress.Report(progressInfo);
                 }
 
                 // Yield the images

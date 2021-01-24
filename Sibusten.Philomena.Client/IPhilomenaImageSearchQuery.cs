@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -26,6 +27,12 @@ namespace Sibusten.Philomena.Client
     /// <param name="imageEnumerable">The input image enumerable</param>
     /// <returns>The filtered image enumerable</returns>
     public delegate IAsyncEnumerable<IPhilomenaImage> FilterImagesDelegate(IAsyncEnumerable<IPhilomenaImage> imageEnumerable);
+
+    public struct MetadataDownloadProgressInfo
+    {
+        public int Downloaded { get; set; }
+        public int Total { get; set; }
+    }
 
     public interface IPhilomenaImageSearchQuery
     {
@@ -62,7 +69,7 @@ namespace Sibusten.Philomena.Client
         /// Enumerates over the results of the query
         /// </summary>
         /// <returns>The search query</returns>
-        IAsyncEnumerable<IPhilomenaImage> EnumerateResultsAsync(CancellationToken cancellationToken = default);
+        IAsyncEnumerable<IPhilomenaImage> EnumerateResultsAsync(CancellationToken cancellationToken = default, IProgress<MetadataDownloadProgressInfo>? progress = null);
 
         /// <summary>
         /// Gets the first image in the query
