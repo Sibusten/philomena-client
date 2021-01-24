@@ -5,6 +5,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Sibusten.Philomena.Api.Models;
 using System.Threading;
+using Sibusten.Philomena.Client.Utilities;
 
 namespace Sibusten.Philomena.Client
 {
@@ -35,20 +36,36 @@ namespace Sibusten.Philomena.Client
             }
         }
 
-        public async Task<byte[]> DownloadAsync(CancellationToken cancellationToken = default)
+        public async Task<byte[]> DownloadAsync(CancellationToken cancellationToken = default, IProgress<StreamProgressInfo>? progress = null)
         {
-            return await DownloadUrl.GetBytesAsync(cancellationToken);
+            using MemoryStream memoryStream = new MemoryStream();
+            await DownloadToAsync(memoryStream, cancellationToken, progress);
+
+            // Extract the image data from the memory stream
+            return memoryStream.ToArray();
         }
 
-        public async Task DownloadToAsync(Stream stream, CancellationToken cancellationToken = default)
+        public async Task DownloadToAsync(Stream stream, CancellationToken cancellationToken = default, IProgress<StreamProgressInfo>? progress = null)
         {
-            Stream downloadStream = await DownloadUrl.GetStreamAsync(cancellationToken);
-            await downloadStream.CopyToAsync(stream, cancellationToken);
+            using Stream downloadStream = await DownloadUrl.GetStreamAsync(cancellationToken);
+
+            // Create progress stream wrapper for reporting download progress
+            using StreamProgressReporter progressStream = new StreamProgressReporter(downloadStream, progress);
+
+            await progressStream.CopyToAsync(stream, cancellationToken);
         }
 
-        public async Task DownloadToFileAsync(FileInfo file, CancellationToken cancellationToken = default)
+        public async Task DownloadToFileAsync(string file, CancellationToken cancellationToken = default, IProgress<StreamProgressInfo>? progress = null)
         {
-            await DownloadUrl.DownloadFileAsync(file.DirectoryName, file.Name, cancellationToken: cancellationToken);
+            string? imageDirectory = Path.GetDirectoryName(file);
+            if (imageDirectory is null)
+            {
+                throw new ArgumentException("The file does not have a parent directory", nameof(file));
+            }
+            Directory.CreateDirectory(imageDirectory);
+
+            using FileStream fileStream = File.OpenWrite(file);
+            await DownloadToAsync(fileStream, cancellationToken, progress);
         }
     }
 }

@@ -13,9 +13,8 @@ namespace Sibusten.Philomena.Client.Examples
             IPhilomenaImage image = await client.Search("fluttershy").GetFirstAsync();
 
             string filename = $"ExampleDownloads/DownloadImageToFile/{image.Model.Id}.{image.Model.Format}";
-            FileInfo file = new FileInfo(filename);
 
-            await image.DownloadToFileAsync(file);
+            await image.DownloadToFileAsync(filename);
         }
     }
 }

@@ -25,9 +25,8 @@ namespace Sibusten.Philomena.Client.Examples
             await foreach(IPhilomenaImage image in query.EnumerateResultsAsync())
             {
                 string filename = $"ExampleDownloads/EnumerateSearchQuery/{image.Model.Id}.{image.Model.Format}";
-                FileInfo file = new FileInfo(filename);
 
-                await image.DownloadToFileAsync(file);
+                await image.DownloadToFileAsync(filename);
             }
 
             // Downloading with multiple threads
