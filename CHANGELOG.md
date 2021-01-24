@@ -8,19 +8,10 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 ## [Unreleased]
 
 ### Added
+- Generic stream download methods for image searches
 
 ### Changed
 - Use string paths instead of FileInfo
-
-### Deprecated
-
-### Removed
-
-### Fixed
-
-### Security
-
----
 
 ## [1.0.0-alpha1] - 2020-12-29
 
@@ -34,8 +25,6 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
     - Getting a tag by ID
 - Examples of downloading images and tags
 - CI build and deploy
-
----
 
 <!-- Links -->
 [Keep a Changelog]: https://keepachangelog.com/
