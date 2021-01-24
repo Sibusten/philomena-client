@@ -13,9 +13,9 @@ namespace Sibusten.Philomena.Client.Utilities
     {
         private Stream _sourceStream;
         private long _currentPosition = 0;
-        private IProgress<StreamProgressInfo> _progress;
+        private IProgress<StreamProgressInfo>? _progress;
 
-        public StreamProgressReporter(Stream sourceStream, IProgress<StreamProgressInfo> progress)
+        public StreamProgressReporter(Stream sourceStream, IProgress<StreamProgressInfo>? progress)
         {
             _sourceStream = sourceStream;
             _progress = progress;
@@ -41,7 +41,7 @@ namespace Sibusten.Philomena.Client.Utilities
             int bytesRead = _sourceStream.Read(buffer, offset, count);
             _currentPosition += bytesRead;
 
-            _progress.Report(new StreamProgressInfo()
+            _progress?.Report(new StreamProgressInfo()
             {
                 BytesRead = _currentPosition,
                 BytesTotal = Length,
@@ -54,7 +54,7 @@ namespace Sibusten.Philomena.Client.Utilities
         {
             _currentPosition = _sourceStream.Seek(offset, origin);
 
-            _progress.Report(new StreamProgressInfo()
+            _progress?.Report(new StreamProgressInfo()
             {
                 BytesRead = _currentPosition,
                 BytesTotal = Length,
