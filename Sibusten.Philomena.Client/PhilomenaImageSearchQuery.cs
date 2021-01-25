@@ -154,10 +154,10 @@ namespace Sibusten.Philomena.Client
         public async Task DownloadAllAsync(GetStreamForImageDelegate getStreamForImage, bool leaveOpen = false, CancellationToken cancellationToken = default, IProgress<ImageDownloadProgressInfo>? progress = null)
         {
             // Run the filtered download with a filter that does nothing
-            await DownloadAllAsync(getStreamForImage, leaveOpen, i => i, cancellationToken, progress);
+            await DownloadAllAsync(getStreamForImage, leaveOpen, i => true, cancellationToken, progress);
         }
 
-        public async Task DownloadAllAsync(GetStreamForImageDelegate getStreamForImage, bool leaveOpen, FilterImagesDelegate filterImages, CancellationToken cancellationToken = default, IProgress<ImageDownloadProgressInfo>? progress = null)
+        public async Task DownloadAllAsync(GetStreamForImageDelegate getStreamForImage, bool leaveOpen, ShouldDownloadImageDelegate shouldDownloadImage, CancellationToken cancellationToken = default, IProgress<ImageDownloadProgressInfo>? progress = null)
         {
             // Create progress reporting info
             ImageDownloadProgressInfo imageDownloadProgressInfo = new ImageDownloadProgressInfo()
@@ -186,12 +186,22 @@ namespace Sibusten.Philomena.Client
             // Begin metadata enumeration
             IAsyncEnumerable<IPhilomenaImage> imageEnumerable = EnumerateResultsAsync(cancellationToken, metadataProgress);
 
-            // Filter the images using the custom filter
-            imageEnumerable = filterImages(imageEnumerable);
-
             // Download the images using as many threads as configured
             await imageEnumerable.ParallelForEachAsync(async (IPhilomenaImage image) =>
             {
+                if (!shouldDownloadImage(image))
+                {
+                    // Increment images downloaded, since skipped images count toward the limit
+                    lock (progressLock)
+                    {
+                        imageDownloadProgressInfo.ImagesDownloaded++;
+                        progress?.Report(imageDownloadProgressInfo);
+                    }
+
+                    // Skip this image
+                    return;
+                }
+
                 // Pick a download slot for this thread
                 int downloadSlot;
                 lock (progressLock)
@@ -258,10 +268,10 @@ namespace Sibusten.Philomena.Client
         public async Task DownloadAllToFilesAsync(GetFileForImageDelegate getFileForImage, CancellationToken cancellationToken = default, IProgress<ImageDownloadProgressInfo>? progress = null)
         {
             // Run the filtered download with a filter that does nothing
-            await DownloadAllToFilesAsync(getFileForImage, i => i, cancellationToken, progress);
+            await DownloadAllToFilesAsync(getFileForImage, i => true, cancellationToken, progress);
         }
 
-        public async Task DownloadAllToFilesAsync(GetFileForImageDelegate getFileForImage, FilterImagesDelegate filterImages, CancellationToken cancellationToken = default, IProgress<ImageDownloadProgressInfo>? progress = null)
+        public async Task DownloadAllToFilesAsync(GetFileForImageDelegate getFileForImage, ShouldDownloadImageDelegate shouldDownloadImage, CancellationToken cancellationToken = default, IProgress<ImageDownloadProgressInfo>? progress = null)
         {
             // Run the stream downloader with a delegate that gets a stream from the image. Make sure the stream is closed.
             await DownloadAllAsync(image =>
@@ -279,7 +289,7 @@ namespace Sibusten.Philomena.Client
                 return File.OpenWrite(imageFile);
             },
             leaveOpen: false,
-            filterImages,
+            shouldDownloadImage,
             cancellationToken,
             progress);
         }

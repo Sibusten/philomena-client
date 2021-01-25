@@ -25,7 +25,7 @@ namespace Sibusten.Philomena.Client.Examples
 
             // Using a delegate method and a custom filter to skip images already downloaded
             // Note that using direct query filtering methods are preferred since they will provide better performance. Don't use the custom filter for conditions like image score.
-            await query.DownloadAllToFilesAsync(GetFileForImage, FilterImagesAlreadyDownloaded);
+            await query.DownloadAllToFilesAsync(GetFileForImage, SkipImagesAlreadyDownloaded);
 
             Console.WriteLine("Downloading images explicitly");
 
@@ -46,7 +46,7 @@ namespace Sibusten.Philomena.Client.Examples
                 .Search("fluttershy")
                 .Limit(100)
                 .WithMaxDownloadThreads(8)
-                .DownloadAllToFilesAsync(GetFileForImage, FilterImagesAlreadyDownloaded, progress: progress);
+                .DownloadAllToFilesAsync(GetFileForImage, SkipImagesAlreadyDownloaded, progress: progress);
         }
 
         private string GetFileForImage(IPhilomenaImage image)
@@ -63,9 +63,9 @@ namespace Sibusten.Philomena.Client.Examples
             return File.Exists(imageFile);
         }
 
-        private IAsyncEnumerable<IPhilomenaImage> FilterImagesAlreadyDownloaded(IAsyncEnumerable<IPhilomenaImage> imageEnumerable)
+        private bool SkipImagesAlreadyDownloaded(IPhilomenaImage image)
         {
-            return imageEnumerable.Where(image => !ImageExists(image));
+            return !ImageExists(image);
         }
 
         private int _lastImageProgress = 0;
