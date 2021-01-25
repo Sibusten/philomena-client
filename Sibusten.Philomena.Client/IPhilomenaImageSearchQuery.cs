@@ -34,6 +34,21 @@ namespace Sibusten.Philomena.Client
         public int Total { get; set; }
     }
 
+    public struct ImageDownloadProgressInfo
+    {
+        public int ImagesDownloaded { get; set; }
+        public int MetadataDownloaded { get; set; }
+        public int TotalImages { get; set; }
+        public ParallelImageDownloadProgressInfo[] Downloads { get; init; }
+    }
+
+    public struct ParallelImageDownloadProgressInfo
+    {
+        public int ImageId { get; set; }
+        public long BytesDownloaded { get; set; }
+        public long BytesTotal { get; set; }
+    }
+
     public interface IPhilomenaImageSearchQuery
     {
         /// <summary>
@@ -82,7 +97,7 @@ namespace Sibusten.Philomena.Client
         /// </summary>
         /// <param name="getStreamForImage">A delegate that returns the stream to download each image to</param>
         /// <param name="leaveOpen">Whether the stream should be left open after writing</param>
-        Task DownloadAllAsync(GetStreamForImageDelegate getStreamForImage, bool leaveOpen = false, CancellationToken cancellationToken = default);
+        Task DownloadAllAsync(GetStreamForImageDelegate getStreamForImage, bool leaveOpen = false, CancellationToken cancellationToken = default, IProgress<ImageDownloadProgressInfo>? progress = null);
 
         /// <summary>
         /// Downloads all images in the query that pass a custom filter
@@ -90,13 +105,13 @@ namespace Sibusten.Philomena.Client
         /// <param name="getStreamForImage">A delegate that returns the stream to download each image to. The stream will be disposed after downloading.</param>
         /// <param name="filterImages">A delegate that allows a custom filter on the images downloaded</param>
         /// <remarks>Note: many conditions can be specified directly and provide better performance if done that way. Only use the custom filter if the condition cannot be added otherwise.</remarks>
-        Task DownloadAllAsync(GetStreamForImageDelegate getStreamForImage, bool leaveOpen, FilterImagesDelegate filterImages, CancellationToken cancellationToken = default);
+        Task DownloadAllAsync(GetStreamForImageDelegate getStreamForImage, bool leaveOpen, FilterImagesDelegate filterImages, CancellationToken cancellationToken = default, IProgress<ImageDownloadProgressInfo>? progress = null);
 
         /// <summary>
         /// Downloads all images in the query to files
         /// </summary>
         /// <param name="getFileForImage">A delegate that returns the file to download each image to</param>
-        Task DownloadAllToFilesAsync(GetFileForImageDelegate getFileForImage, CancellationToken cancellationToken = default);
+        Task DownloadAllToFilesAsync(GetFileForImageDelegate getFileForImage, CancellationToken cancellationToken = default, IProgress<ImageDownloadProgressInfo>? progress = null);
 
         /// <summary>
         /// Downloads all images in the query that pass a custom filter to files
@@ -104,6 +119,6 @@ namespace Sibusten.Philomena.Client
         /// <param name="getFileForImage">A delegate that returns the file to download each image to</param>
         /// <param name="filterImages">A delegate that allows a custom filter on the images downloaded</param>
         /// <remarks>Note: many conditions can be specified directly and provide better performance if done that way. Only use the custom filter if the condition cannot be added otherwise.</remarks>
-        Task DownloadAllToFilesAsync(GetFileForImageDelegate getFileForImage, FilterImagesDelegate filterImages, CancellationToken cancellationToken = default);
+        Task DownloadAllToFilesAsync(GetFileForImageDelegate getFileForImage, FilterImagesDelegate filterImages, CancellationToken cancellationToken = default, IProgress<ImageDownloadProgressInfo>? progress = null);
     }
 }

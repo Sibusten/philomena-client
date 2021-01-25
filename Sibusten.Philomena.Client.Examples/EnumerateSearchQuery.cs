@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Sibusten.Philomena.Client.Utilities;
 
 namespace Sibusten.Philomena.Client.Examples
 {
@@ -36,12 +37,16 @@ namespace Sibusten.Philomena.Client.Examples
                 await image.DownloadToFileAsync(filename);
             }
 
-            // Downloading with multiple threads
+            Console.WriteLine("Downloading with multiple threads and progress updates");
+
+            // Downloading with multiple threads and progress updates
+            // Also skips downloaded images like before
+            SyncProgress<ImageDownloadProgressInfo> progress = new SyncProgress<ImageDownloadProgressInfo>(DownloadProgressUpdate);
             await client
                 .Search("fluttershy")
                 .Limit(100)
                 .WithMaxDownloadThreads(8)
-                .DownloadAllToFilesAsync(GetFileForImage);
+                .DownloadAllToFilesAsync(GetFileForImage, FilterImagesAlreadyDownloaded, progress: progress);
         }
 
         private string GetFileForImage(IPhilomenaImage image)
@@ -61,6 +66,23 @@ namespace Sibusten.Philomena.Client.Examples
         private IAsyncEnumerable<IPhilomenaImage> FilterImagesAlreadyDownloaded(IAsyncEnumerable<IPhilomenaImage> imageEnumerable)
         {
             return imageEnumerable.Where(image => !ImageExists(image));
+        }
+
+        private int _lastImageProgress = 0;
+
+        private void DownloadProgressUpdate(ImageDownloadProgressInfo imageDownloadProgressInfo)
+        {
+            // Only write to console when images are downloaded
+            // NOTE: If more information is being reported, consider using a separate polling thread to update on an interval and having the progress report function only update a variable. This prevents slowing the download.
+            if (imageDownloadProgressInfo.ImagesDownloaded == _lastImageProgress)
+            {
+                return;
+            }
+            _lastImageProgress = imageDownloadProgressInfo.ImagesDownloaded;
+
+            // Simple progress updating to console. Progress for each download thread is also available, but not used here.
+            double percentDownloaded = (double)imageDownloadProgressInfo.ImagesDownloaded / (double)imageDownloadProgressInfo.TotalImages * 100.0;
+            Console.WriteLine($"{imageDownloadProgressInfo.ImagesDownloaded}/{imageDownloadProgressInfo.TotalImages} ({percentDownloaded:00.0}%)");
         }
     }
 }

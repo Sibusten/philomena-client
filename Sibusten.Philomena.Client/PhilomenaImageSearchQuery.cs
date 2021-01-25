@@ -8,11 +8,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using Sibusten.Philomena.Api;
 using Sibusten.Philomena.Api.Models;
+using Sibusten.Philomena.Client.Utilities;
 
 namespace Sibusten.Philomena.Client
 {
     public class PhilomenaImageSearchQuery : IPhilomenaImageSearchQuery
     {
+        public const int NoImageDownloading = -1;
+
         private readonly PhilomenaApi _api;
         private readonly string _query;
         private readonly string? _apiKey;
@@ -148,24 +151,86 @@ namespace Sibusten.Philomena.Client
             return this;
         }
 
-        public async Task DownloadAllAsync(GetStreamForImageDelegate getStreamForImage, bool leaveOpen = false, CancellationToken cancellationToken = default)
+        public async Task DownloadAllAsync(GetStreamForImageDelegate getStreamForImage, bool leaveOpen = false, CancellationToken cancellationToken = default, IProgress<ImageDownloadProgressInfo>? progress = null)
         {
             // Run the filtered download with a filter that does nothing
-            await DownloadAllAsync(getStreamForImage, leaveOpen, i => i, cancellationToken);
+            await DownloadAllAsync(getStreamForImage, leaveOpen, i => i, cancellationToken, progress);
         }
 
-        public async Task DownloadAllAsync(GetStreamForImageDelegate getStreamForImage, bool leaveOpen, FilterImagesDelegate filterImages, CancellationToken cancellationToken = default)
+        public async Task DownloadAllAsync(GetStreamForImageDelegate getStreamForImage, bool leaveOpen, FilterImagesDelegate filterImages, CancellationToken cancellationToken = default, IProgress<ImageDownloadProgressInfo>? progress = null)
         {
+            // Create progress reporting info
+            ImageDownloadProgressInfo imageDownloadProgressInfo = new ImageDownloadProgressInfo()
+            {
+                Downloads = new ParallelImageDownloadProgressInfo[_maxDownloadThreads]
+            };
+            object progressLock = new object();
+
+            // Blank all image download slots
+            for (int i = 0; i < _maxDownloadThreads; i++)
+            {
+                imageDownloadProgressInfo.Downloads[i].ImageId = NoImageDownloading;
+            }
+
+            // Set up metadata download progress hooks
+            SyncProgress<MetadataDownloadProgressInfo> metadataProgress = new SyncProgress<MetadataDownloadProgressInfo>(metadataProgressInfo =>
+            {
+                lock (progressLock)
+                {
+                    imageDownloadProgressInfo.MetadataDownloaded = metadataProgressInfo.Downloaded;
+                    imageDownloadProgressInfo.TotalImages = metadataProgressInfo.Total;
+                    progress?.Report(imageDownloadProgressInfo);
+                }
+            });
+
+            // Begin metadata enumeration
+            IAsyncEnumerable<IPhilomenaImage> imageEnumerable = EnumerateResultsAsync(cancellationToken, metadataProgress);
+
             // Filter the images using the custom filter
-            IAsyncEnumerable<IPhilomenaImage> imageEnumerable = filterImages(EnumerateResultsAsync(cancellationToken));
+            imageEnumerable = filterImages(imageEnumerable);
 
             // Download the images using as many threads as configured
             await imageEnumerable.ParallelForEachAsync(async (IPhilomenaImage image) =>
             {
+                // Pick a download slot for this thread
+                int downloadSlot;
+                lock (progressLock)
+                {
+                    downloadSlot = Array.FindIndex(imageDownloadProgressInfo.Downloads, d => d.ImageId == NoImageDownloading);
+
+                    if (downloadSlot == -1)
+                    {
+                        throw new InvalidOperationException("Could not find an open download slot!");
+                    }
+
+                    if (image.Model.Id is null)
+                    {
+                        throw new InvalidOperationException("Image is missing an ID");
+                    }
+
+                    imageDownloadProgressInfo.Downloads[downloadSlot].ImageId = image.Model.Id.Value;
+                    imageDownloadProgressInfo.Downloads[downloadSlot].BytesDownloaded = 0;
+                    imageDownloadProgressInfo.Downloads[downloadSlot].BytesTotal = 0;
+                    progress?.Report(imageDownloadProgressInfo);
+                }
+
+                // Create a hook for image download progress
+                SyncProgress<StreamProgressInfo> downloadProgress = new SyncProgress<StreamProgressInfo>(streamProgressInfo =>
+                {
+                    // Update the progress of this image download
+                    lock (progressLock)
+                    {
+                        imageDownloadProgressInfo.Downloads[downloadSlot].BytesDownloaded = streamProgressInfo.BytesRead;
+                        imageDownloadProgressInfo.Downloads[downloadSlot].BytesTotal = streamProgressInfo.BytesTotal;
+                        progress?.Report(imageDownloadProgressInfo);
+                    }
+                });
+
+                // Begin the download
                 Stream imageStream = getStreamForImage(image);
                 try
                 {
-                    await image.DownloadToAsync(imageStream, cancellationToken);
+                    await image.DownloadToAsync(imageStream, cancellationToken, downloadProgress);
                 }
                 finally
                 {
@@ -175,18 +240,28 @@ namespace Sibusten.Philomena.Client
                         imageStream?.Dispose();
                     }
                 }
+
+                // Update image download count progress and free a download slot
+                lock (progressLock)
+                {
+                    imageDownloadProgressInfo.Downloads[downloadSlot].ImageId = NoImageDownloading;
+                    imageDownloadProgressInfo.Downloads[downloadSlot].BytesDownloaded = 0;
+                    imageDownloadProgressInfo.Downloads[downloadSlot].BytesTotal = 0;
+                    imageDownloadProgressInfo.ImagesDownloaded++;
+                    progress?.Report(imageDownloadProgressInfo);
+                }
             },
             maxDegreeOfParallelism: _maxDownloadThreads,
             cancellationToken: cancellationToken);
         }
 
-        public async Task DownloadAllToFilesAsync(GetFileForImageDelegate getFileForImage, CancellationToken cancellationToken = default)
+        public async Task DownloadAllToFilesAsync(GetFileForImageDelegate getFileForImage, CancellationToken cancellationToken = default, IProgress<ImageDownloadProgressInfo>? progress = null)
         {
             // Run the filtered download with a filter that does nothing
-            await DownloadAllToFilesAsync(getFileForImage, i => i, cancellationToken);
+            await DownloadAllToFilesAsync(getFileForImage, i => i, cancellationToken, progress);
         }
 
-        public async Task DownloadAllToFilesAsync(GetFileForImageDelegate getFileForImage, FilterImagesDelegate filterImages, CancellationToken cancellationToken = default)
+        public async Task DownloadAllToFilesAsync(GetFileForImageDelegate getFileForImage, FilterImagesDelegate filterImages, CancellationToken cancellationToken = default, IProgress<ImageDownloadProgressInfo>? progress = null)
         {
             // Run the stream downloader with a delegate that gets a stream from the image. Make sure the stream is closed.
             await DownloadAllAsync(image =>
@@ -205,7 +280,8 @@ namespace Sibusten.Philomena.Client
             },
             leaveOpen: false,
             filterImages,
-            cancellationToken);
+            cancellationToken,
+            progress);
         }
     }
 }
