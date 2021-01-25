@@ -19,7 +19,7 @@ namespace Sibusten.Philomena.Client.Examples
             Console.WriteLine("Download query simple");
 
             // Using download all method
-            await query.DownloadAllToFilesAsync(image => $"ExampleDownloads/EnumerateSearchQuery/{image.Model.Id}.{image.Model.Format}");
+            await query.DownloadAllToFilesAsync(image => $"ExampleDownloads/EnumerateSearchQuery/{image.Id}.{image.Model.Format}");
 
             Console.WriteLine("Download query with delegates, skipping existing images");
 
@@ -32,7 +32,7 @@ namespace Sibusten.Philomena.Client.Examples
             // Explicitly looping over each image and saving
             await foreach (IPhilomenaImage image in query.EnumerateResultsAsync())
             {
-                string filename = $"ExampleDownloads/EnumerateSearchQuery/{image.Model.Id}.{image.Model.Format}";
+                string filename = $"ExampleDownloads/EnumerateSearchQuery/{image.Id}.{image.Model.Format}";
 
                 await image.DownloadToFileAsync(filename);
             }
@@ -52,7 +52,7 @@ namespace Sibusten.Philomena.Client.Examples
         private string GetFileForImage(IPhilomenaImage image)
         {
             // A custom file naming scheme could be used here to generate file names
-            return $"ExampleDownloads/EnumerateSearchQuery/{image.Model.Id}.{image.Model.Format}";
+            return $"ExampleDownloads/EnumerateSearchQuery/{image.Id}.{image.Model.Format}";
         }
 
         private bool ImageExists(IPhilomenaImage image)

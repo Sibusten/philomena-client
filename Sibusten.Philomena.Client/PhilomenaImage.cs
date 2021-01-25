@@ -18,6 +18,19 @@ namespace Sibusten.Philomena.Client
             Model = model;
         }
 
+        public int Id
+        {
+            get
+            {
+                if (Model.Id is null)
+                {
+                    throw new InvalidOperationException("Image is missing an ID");
+                }
+
+                return Model.Id.Value;
+            }
+        }
+
         public Url DownloadUrl
         {
             get

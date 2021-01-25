@@ -15,7 +15,7 @@ namespace Sibusten.Philomena.Client.Examples
             // Get an image
             IPhilomenaImage image = await client.Search("fluttershy").GetFirstAsync();
 
-            Console.WriteLine($"Tags for image {image.Model.Id}:");
+            Console.WriteLine($"Tags for image {image.Id}:");
 
             // Get the tags from the IDs
             foreach (int tagId in image.Model.TagIds)

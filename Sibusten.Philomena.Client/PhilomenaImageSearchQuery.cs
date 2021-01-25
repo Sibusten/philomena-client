@@ -218,12 +218,7 @@ namespace Sibusten.Philomena.Client
                         throw new InvalidOperationException("Could not find an open download slot!");
                     }
 
-                    if (image.Model.Id is null)
-                    {
-                        throw new InvalidOperationException("Image is missing an ID");
-                    }
-
-                    imageDownloadProgressInfo.Downloads[downloadSlot].ImageId = image.Model.Id.Value;
+                    imageDownloadProgressInfo.Downloads[downloadSlot].ImageId = image.Id;
                     imageDownloadProgressInfo.Downloads[downloadSlot].BytesDownloaded = 0;
                     imageDownloadProgressInfo.Downloads[downloadSlot].BytesTotal = 0;
                     progress?.Report(imageDownloadProgressInfo);
