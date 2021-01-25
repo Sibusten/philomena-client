@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,17 +13,23 @@ namespace Sibusten.Philomena.Client.Examples
         public async Task RunExample()
         {
             PhilomenaClient client = new PhilomenaClient("https://derpibooru.org");
-            IPhilomenaImageSearchQuery query = client.Search("fluttershy").Limit(10);
+            IPhilomenaImageSearchQuery query = client.Search("fluttershy").Limit(5);
+
+            Console.WriteLine("Download query simple");
 
             // Using download all method
             await query.DownloadAllToFilesAsync(image => $"ExampleDownloads/EnumerateSearchQuery/{image.Model.Id}.{image.Model.Format}");
+
+            Console.WriteLine("Download query with delegates, skipping existing images");
 
             // Using a delegate method and a custom filter to skip images already downloaded
             // Note that using direct query filtering methods are preferred since they will provide better performance. Don't use the custom filter for conditions like image score.
             await query.DownloadAllToFilesAsync(GetFileForImage, FilterImagesAlreadyDownloaded);
 
+            Console.WriteLine("Downloading images explicitly");
+
             // Explicitly looping over each image and saving
-            await foreach(IPhilomenaImage image in query.EnumerateResultsAsync())
+            await foreach (IPhilomenaImage image in query.EnumerateResultsAsync())
             {
                 string filename = $"ExampleDownloads/EnumerateSearchQuery/{image.Model.Id}.{image.Model.Format}";
 
