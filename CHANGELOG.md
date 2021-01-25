@@ -9,9 +9,11 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 
 ### Added
 - Generic stream download methods for image searches
+- Progress reporting for image and search downloads
 
 ### Changed
 - Use string paths instead of FileInfo
+- `FilterImagesDelegate` to `ShouldDownloadImageDelegate`
 
 ### Fixed
 - One metadata download after limit reached if limit is a multiple of page size
