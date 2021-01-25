@@ -13,6 +13,9 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 ### Changed
 - Use string paths instead of FileInfo
 
+### Fixed
+- One metadata download after limit reached if limit is a multiple of page size
+
 ## [1.0.0-alpha1] - 2020-12-29
 
 ### Added

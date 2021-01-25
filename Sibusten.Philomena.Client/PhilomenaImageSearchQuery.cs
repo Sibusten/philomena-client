@@ -88,15 +88,15 @@ namespace Sibusten.Philomena.Client
                 // Yield the images
                 foreach (ImageModel imageModel in search.Images)
                 {
-                    if (imagesProcessed >= _limit)
-                    {
-                        yield break;
-                    }
-
                     IPhilomenaImage image = new PhilomenaImage(imageModel);
 
                     yield return image;
                     imagesProcessed++;
+
+                    if (imagesProcessed >= _limit)
+                    {
+                        yield break;
+                    }
                 }
 
                 // Move to the next page
@@ -118,6 +118,11 @@ namespace Sibusten.Philomena.Client
 
         public IPhilomenaImageSearchQuery Limit(int maxImages)
         {
+            if (maxImages <= 0)
+            {
+                throw new ArgumentOutOfRangeException("Image limit must be greater than 0", nameof(maxImages));
+            }
+
             _limit = maxImages;
 
             return this;
