@@ -31,6 +31,33 @@ namespace Sibusten.Philomena.Client
             }
         }
 
+        public string Name
+        {
+            get
+            {
+                if (Model.ViewUrl is null)
+                {
+                    return "";
+                }
+
+                string localPath = new Uri(Model.ViewUrl).LocalPath;
+                return Path.GetFileNameWithoutExtension(localPath);
+            }
+        }
+
+        public string OriginalName
+        {
+            get
+            {
+                if (Model.Name is null)
+                {
+                    return "";
+                }
+
+                Path.GetFileNameWithoutExtension(Model.Name);
+            }
+        }
+
         public Url DownloadUrl
         {
             get

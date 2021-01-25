@@ -15,6 +15,8 @@ namespace Sibusten.Philomena.Client
         ImageModel Model { get; }
 
         int Id { get; }
+        string Name { get; }
+        string OriginalName { get; }
 
         /// <summary>
         /// Downloads the image
