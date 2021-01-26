@@ -3,9 +3,9 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog][Keep a Changelog] and this project adheres to [Semantic Versioning][Semantic Versioning].
 
----
-
 ## [Unreleased]
+
+## [1.0.0-alpha2] - 2020-01-25
 
 ### Added
 - Generic stream download methods for image searches
@@ -37,4 +37,5 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 
 <!-- Versions -->
 [Unreleased]: https://github.com/Sibusten/philomena-client/compare/v1.0.0-alpha1...HEAD
+[1.0.0-alpha2]: https://github.com/Sibusten/philomena-client/compare/v1.0.0-alpha1..v1.0.0-alpha2
 [1.0.0-alpha1]: https://github.com/Sibusten/philomena-client/releases/v1.0.0-alpha1
