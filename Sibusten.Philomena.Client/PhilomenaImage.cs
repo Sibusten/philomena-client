@@ -54,7 +54,7 @@ namespace Sibusten.Philomena.Client
                     return "";
                 }
 
-                Path.GetFileNameWithoutExtension(Model.Name);
+                return Path.GetFileNameWithoutExtension(Model.Name);
             }
         }
 
