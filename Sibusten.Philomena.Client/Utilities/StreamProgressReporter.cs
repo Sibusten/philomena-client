@@ -6,19 +6,21 @@ namespace Sibusten.Philomena.Client.Utilities
     public struct StreamProgressInfo
     {
         public long BytesRead { get; set; }
-        public long BytesTotal { get; set; }
+        public long? BytesTotal { get; set; }
     }
 
     public class StreamProgressReporter : Stream
     {
         private Stream _sourceStream;
         private long _currentPosition = 0;
+        private long? _reportedLength;
         private IProgress<StreamProgressInfo>? _progress;
 
-        public StreamProgressReporter(Stream sourceStream, IProgress<StreamProgressInfo>? progress)
+        public StreamProgressReporter(Stream sourceStream, IProgress<StreamProgressInfo>? progress, long? length = null)
         {
             _sourceStream = sourceStream;
             _progress = progress;
+            _reportedLength = length;
         }
 
         public override bool CanRead => _sourceStream.CanRead;
@@ -44,7 +46,7 @@ namespace Sibusten.Philomena.Client.Utilities
             _progress?.Report(new StreamProgressInfo()
             {
                 BytesRead = _currentPosition,
-                BytesTotal = Length,
+                BytesTotal = CanSeek ? Length : _reportedLength,  // Use the stream length if seeking is possible, otherwise fall back to a provided length
             });
 
             return bytesRead;

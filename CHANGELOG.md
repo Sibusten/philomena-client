@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 
 ## [Unreleased]
 
+### Changed
+- Use `null` instead of `0` when `BytesTotal` in a download is unknown
+
+### Fixed
+- Download progress for files not reporting until the entire file has downloaded
+
 ## [1.0.0-alpha2] - 2020-01-25
 
 ### Added

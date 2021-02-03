@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Sibusten.Philomena.Api.Models;
 using System.Threading;
 using Sibusten.Philomena.Client.Utilities;
+using System.Net.Http;
 
 namespace Sibusten.Philomena.Client
 {
@@ -87,10 +88,23 @@ namespace Sibusten.Philomena.Client
 
         public async Task DownloadToAsync(Stream stream, CancellationToken cancellationToken = default, IProgress<StreamProgressInfo>? progress = null)
         {
-            using Stream downloadStream = await DownloadUrl.GetStreamAsync(cancellationToken);
+            using IFlurlResponse response = await DownloadUrl.GetAsync(cancellationToken, HttpCompletionOption.ResponseHeadersRead);
+
+            // Attempt to read the length of the stream from the header
+            long? length = null;
+            if (response.Headers.TryGetFirst("Content-Length", out string lengthString))
+            {
+                if (long.TryParse(lengthString, out long parsedLength))
+                {
+                    length = parsedLength;
+                }
+            }
+
+            // Open the image stream
+            using Stream downloadStream = await response.GetStreamAsync();
 
             // Create progress stream wrapper for reporting download progress
-            using StreamProgressReporter progressStream = new StreamProgressReporter(downloadStream, progress);
+            using StreamProgressReporter progressStream = new StreamProgressReporter(downloadStream, progress, length);
 
             await progressStream.CopyToAsync(stream, cancellationToken);
         }

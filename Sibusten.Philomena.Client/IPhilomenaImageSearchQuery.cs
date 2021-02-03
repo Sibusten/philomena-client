@@ -46,7 +46,7 @@ namespace Sibusten.Philomena.Client
     {
         public int ImageId { get; set; }
         public long BytesDownloaded { get; set; }
-        public long BytesTotal { get; set; }
+        public long? BytesTotal { get; set; }
     }
 
     public interface IPhilomenaImageSearchQuery

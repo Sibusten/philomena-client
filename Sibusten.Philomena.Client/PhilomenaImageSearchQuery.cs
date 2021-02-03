@@ -220,7 +220,7 @@ namespace Sibusten.Philomena.Client
 
                     imageDownloadProgressInfo.Downloads[downloadSlot].ImageId = image.Id;
                     imageDownloadProgressInfo.Downloads[downloadSlot].BytesDownloaded = 0;
-                    imageDownloadProgressInfo.Downloads[downloadSlot].BytesTotal = 0;
+                    imageDownloadProgressInfo.Downloads[downloadSlot].BytesTotal = null;
                     progress?.Report(imageDownloadProgressInfo);
                 }
 
@@ -256,7 +256,7 @@ namespace Sibusten.Philomena.Client
                 {
                     imageDownloadProgressInfo.Downloads[downloadSlot].ImageId = NoImageDownloading;
                     imageDownloadProgressInfo.Downloads[downloadSlot].BytesDownloaded = 0;
-                    imageDownloadProgressInfo.Downloads[downloadSlot].BytesTotal = 0;
+                    imageDownloadProgressInfo.Downloads[downloadSlot].BytesTotal = null;
                     imageDownloadProgressInfo.ImagesDownloaded++;
                     progress?.Report(imageDownloadProgressInfo);
                 }
