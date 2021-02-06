@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 
 ### Changed
 - Use `null` instead of `0` when `BytesTotal` in a download is unknown
+- Return null when `IPhilomenaImage` properties are missing instead of throwing an exception
 
 ### Fixed
 - Download progress for files not reporting until the entire file has downloaded

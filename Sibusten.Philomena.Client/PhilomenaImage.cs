@@ -13,32 +13,32 @@ namespace Sibusten.Philomena.Client
     public class PhilomenaImage : IPhilomenaImage
     {
         public ImageModel Model { get; init; }
+        private readonly int _id;
 
         public PhilomenaImage(ImageModel model)
         {
-            Model = model;
-        }
-
-        public int Id
-        {
-            get
+            if (model is null)
             {
-                if (Model.Id is null)
-                {
-                    throw new InvalidOperationException("Image is missing an ID");
-                }
-
-                return Model.Id.Value;
+                throw new ArgumentNullException(nameof(model));
             }
+            if (model.Id is null)
+            {
+                throw new ArgumentNullException("Image is missing an ID", nameof(model.Id));
+            }
+
+            Model = model;
+            _id = model.Id.Value;
         }
 
-        public string Name
+        public int Id => _id;
+
+        public string? Name
         {
             get
             {
                 if (Model.ViewUrl is null)
                 {
-                    return "";
+                    return null;
                 }
 
                 string localPath = new Uri(Model.ViewUrl).LocalPath;
@@ -46,31 +46,26 @@ namespace Sibusten.Philomena.Client
             }
         }
 
-        public string OriginalName
+        public string? OriginalName
         {
             get
             {
                 if (Model.Name is null)
                 {
-                    return "";
+                    return null;
                 }
 
                 return Path.GetFileNameWithoutExtension(Model.Name);
             }
         }
 
-        public Url DownloadUrl
+        public Url? DownloadUrl
         {
             get
             {
-                if (Model.Representations is null)
+                if (Model.Representations is null || Model.Representations.Full is null)
                 {
-                    throw new InvalidOperationException("The image has no representations");
-                }
-
-                if (Model.Representations.Full is null)
-                {
-                    throw new InvalidOperationException("The image is missing a 'full' representation");
+                    return null;
                 }
 
                 return new Url(Model.Representations.Full);
