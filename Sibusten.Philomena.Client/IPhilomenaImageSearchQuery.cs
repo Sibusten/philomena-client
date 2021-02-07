@@ -49,6 +49,13 @@ namespace Sibusten.Philomena.Client
         public long? BytesTotal { get; set; }
     }
 
+    public enum SvgMode
+    {
+        RasterOnly,
+        SvgOnly,
+        Both
+    }
+
     public interface IPhilomenaImageSearchQuery
     {
         /// <summary>
@@ -79,6 +86,13 @@ namespace Sibusten.Philomena.Client
         /// <param name="maxDownloadThreads">The maximum threads to use when downloading images</param>
         /// <returns>The search query</returns>
         IPhilomenaImageSearchQuery WithMaxDownloadThreads(int maxDownloadThreads);
+
+        /// <summary>
+        /// Sets the behavior for SVG images
+        /// </summary>
+        /// <param name="svgMode">How to process SVG images</param>
+        /// <returns>The search query</returns>
+        IPhilomenaImageSearchQuery WithSvgMode(SvgMode svgMode);
 
         /// <summary>
         /// Enumerates over the results of the query

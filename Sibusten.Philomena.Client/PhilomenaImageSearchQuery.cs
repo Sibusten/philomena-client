@@ -26,6 +26,7 @@ namespace Sibusten.Philomena.Client
         private int? _randomSeed = null;
         private int? _filterId = null;
         private int _maxDownloadThreads = 1;
+        private SvgMode _svgMode = SvgMode.RasterOnly;
 
         private const int _perPage = 50;
 
@@ -152,6 +153,13 @@ namespace Sibusten.Philomena.Client
         public IPhilomenaImageSearchQuery WithMaxDownloadThreads(int maxDownloadThreads)
         {
             _maxDownloadThreads = maxDownloadThreads;
+
+            return this;
+        }
+
+        public IPhilomenaImageSearchQuery WithSvgMode(SvgMode svgMode)
+        {
+            _svgMode = svgMode;
 
             return this;
         }
