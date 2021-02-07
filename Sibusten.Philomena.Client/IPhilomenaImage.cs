@@ -17,6 +17,9 @@ namespace Sibusten.Philomena.Client
         int Id { get; }
         string? Name { get; }
         string? OriginalName { get; }
+        string? Format { get; }
+        string? Hash { get; }
+        string? OriginalHash { get; }
 
         /// <summary>
         /// Downloads the image

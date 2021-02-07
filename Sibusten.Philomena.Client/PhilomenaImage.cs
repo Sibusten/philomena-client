@@ -72,6 +72,10 @@ namespace Sibusten.Philomena.Client
             }
         }
 
+        public string? Format => Model.Format;
+        public string? Hash => Model.Sha512Hash;
+        public string? OriginalHash => Model.OrigSha512Hash;
+
         public async Task<byte[]> DownloadAsync(CancellationToken cancellationToken = default, IProgress<StreamProgressInfo>? progress = null)
         {
             using MemoryStream memoryStream = new MemoryStream();
