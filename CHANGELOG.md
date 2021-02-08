@@ -13,6 +13,7 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 - Use `null` instead of `0` when `BytesTotal` in a download is unknown
 - Return null when `IPhilomenaImage` properties are missing instead of throwing an exception
 - Prevent direct access to api model from IPhilomenaImage interface
+    - Properties are exposed that abstract the model
 
 ### Fixed
 - Download progress for files not reporting until the entire file has downloaded

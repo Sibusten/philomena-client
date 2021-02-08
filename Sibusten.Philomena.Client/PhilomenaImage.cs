@@ -84,6 +84,26 @@ namespace Sibusten.Philomena.Client
             }
         }
 
+        public string? ViewUrl
+        {
+            get
+            {
+                if (Model.ViewUrl is null)
+                {
+                    return null;
+                }
+
+                if (IsSvgVersion)
+                {
+                    // Modify the view URL to point to the SVG image
+                    string urlWithoutExtension = Model.ViewUrl.Substring(0, Model.ViewUrl.LastIndexOf('.'));
+                    return new Url(urlWithoutExtension + ".svg");
+                }
+
+                return Model.ViewUrl;
+            }
+        }
+
         public string? Format
         {
             get
@@ -99,10 +119,50 @@ namespace Sibusten.Philomena.Client
             }
         }
 
+        public int? FileSize
+        {
+            get
+            {
+                if (IsSvgVersion)
+                {
+                    // The size of the SVG image is not known
+                    return null;
+                }
+
+                return Model.Size;
+            }
+        }
+
         public string? Hash => Model.Sha512Hash;
         public string? OriginalHash => Model.OrigSha512Hash;
         public List<string> TagNames => Model.Tags?.ToList() ?? new List<string>();  // .ToList to prevent editing the original model list
         public List<int> TagIds => Model.TagIds?.ToList() ?? new List<int>();  // .ToList to prevent editing the original model list
+        public int? Score => Model.Score;
+        public string? SourceUrl => Model.SourceUrl;
+        public bool? IsSpoilered => Model.IsSpoilered;
+        public int? TagCount => Model.TagCount;
+        public bool? ThumbnailsGenerated => Model.ThumbnailsGenerated;
+        public DateTime? UpdatedAt => Model.UpdatedAt;
+        public string? Uploader => Model.Uploader;
+        public int? UploaderId => Model.UploaderId;
+        public int? Upvotes => Model.Upvotes;
+        public bool? Processed => Model.Processed;
+        public string? MimeType => Model.MimeType;
+        public bool? IsAnimated => Model.IsAnimated;
+        public double? AspectRatio => Model.AspectRatio;
+        public int? CommentCount => Model.CommentCount;
+        public DateTime? CreatedAt => Model.CreatedAt;
+        public string? DeletionReason => Model.DeletionReason;
+        public string? Description => Model.Description;
+        public int? Downvotes => Model.Downvotes;
+        public int? Width => Model.Width;
+        public int? DuplicateOf => Model.DuplicateOf;
+        public int? Faves => Model.Faves;
+        public DateTime? FirstSeenAt => Model.FirstSeenAt;
+        public int? Height => Model.Height;
+        public bool? IsHiddenFromUsers => Model.IsHiddenFromUsers;
+        public double? Duration => Model.Duration;
+        public double? WilsonScore => Model.WilsonScore;
 
         public async Task<byte[]> DownloadAsync(CancellationToken cancellationToken = default, IProgress<StreamProgressInfo>? progress = null)
         {
