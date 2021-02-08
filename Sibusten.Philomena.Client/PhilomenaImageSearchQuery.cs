@@ -91,9 +91,30 @@ namespace Sibusten.Philomena.Client
                 {
                     IPhilomenaImage image = new PhilomenaImage(imageModel);
 
-                    yield return image;
-                    imagesProcessed++;
+                    if (image.IsSvgImage)
+                    {
+                        if (_svgMode is SvgMode.RasterOnly or SvgMode.Both)
+                        {
+                            // Provide the original image which represents the raster version
+                            yield return image;
+                        }
 
+                        if (_svgMode is SvgMode.SvgOnly or SvgMode.Both)
+                        {
+                            // Provide a new image which represents the SVG version
+                            IPhilomenaImage svgImage = new PhilomenaImage(imageModel)
+                            {
+                                IsSvgVersion = true
+                            };
+                            yield return svgImage;
+                        }
+                    }
+                    else
+                    {
+                        yield return image;
+                    }
+
+                    imagesProcessed++;
                     if (imagesProcessed >= _limit)
                     {
                         yield break;

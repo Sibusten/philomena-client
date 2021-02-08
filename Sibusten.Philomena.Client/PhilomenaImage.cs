@@ -12,8 +12,11 @@ namespace Sibusten.Philomena.Client
 {
     public class PhilomenaImage : IPhilomenaImage
     {
-        public ImageModel Model { get; init; }
+        public ImageModel Model { get; private init; }
         private readonly int _id;
+        public bool IsSvgVersion { get; init; } = false;
+
+        public bool IsSvgImage => Model.Format == "svg";
 
         public PhilomenaImage(ImageModel model)
         {
@@ -68,11 +71,32 @@ namespace Sibusten.Philomena.Client
                     return null;
                 }
 
+                if (IsSvgVersion)
+                {
+                    // Modify the full URL to point to the SVG image
+                    string urlWithoutExtension = Model.Representations.Full.Substring(0, Model.Representations.Full.LastIndexOf('.'));
+                    return new Url(urlWithoutExtension + ".svg");
+                }
+
                 return new Url(Model.Representations.Full);
             }
         }
 
-        public string? Format => Model.Format;
+        public string? Format
+        {
+            get
+            {
+                if (IsSvgImage)
+                {
+                    // The image is an SVG image, which has two possible formats
+                    // Assume rasters are always png
+                    return IsSvgVersion ? "svg" : "png";
+                }
+
+                return Model.Format;
+            }
+        }
+
         public string? Hash => Model.Sha512Hash;
         public string? OriginalHash => Model.OrigSha512Hash;
 

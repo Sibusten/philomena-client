@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 
 ## [Unreleased]
 
+### Added
+- SvgMode option to image downloads
+    - Allows downloading only SVG images, only rasters, or both
+
 ### Changed
 - Use `null` instead of `0` when `BytesTotal` in a download is unknown
 - Return null when `IPhilomenaImage` properties are missing instead of throwing an exception

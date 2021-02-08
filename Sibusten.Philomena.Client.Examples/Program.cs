@@ -13,6 +13,7 @@ namespace Sibusten.Philomena.Client.Examples
             {
                 new DownloadImageToFile(),
                 new EnumerateSearchQuery(),
+                new DownloadSvgImages(),
                 new GetTagsForImage(),
             };
 

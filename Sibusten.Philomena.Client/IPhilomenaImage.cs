@@ -14,6 +14,17 @@ namespace Sibusten.Philomena.Client
         /// </summary>
         ImageModel Model { get; }
 
+        /// <summary>
+        /// True if this is an SVG image (one which has both an SVG download and a raster download)
+        /// </summary>
+        bool IsSvgImage { get; }
+
+        /// <summary>
+        /// True if this represents the SVG version of an image, or false if it represents the raster version
+        /// </summary>
+        /// <value></value>
+        bool IsSvgVersion { get; }
+
         int Id { get; }
         string? Name { get; }
         string? OriginalName { get; }
