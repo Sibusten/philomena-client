@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,11 +10,6 @@ namespace Sibusten.Philomena.Client
 {
     public interface IPhilomenaImage
     {
-        /// <summary>
-        /// The image model for this image
-        /// </summary>
-        ImageModel Model { get; }
-
         /// <summary>
         /// True if this is an SVG image (one which has both an SVG download and a raster download)
         /// </summary>
@@ -31,6 +27,8 @@ namespace Sibusten.Philomena.Client
         string? Format { get; }
         string? Hash { get; }
         string? OriginalHash { get; }
+        List<string> TagNames { get; }
+        List<int> TagIds { get; }
 
         /// <summary>
         /// Downloads the image

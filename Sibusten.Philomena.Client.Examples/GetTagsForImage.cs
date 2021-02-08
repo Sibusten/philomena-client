@@ -18,7 +18,7 @@ namespace Sibusten.Philomena.Client.Examples
             Console.WriteLine($"Tags for image {image.Id}:");
 
             // Get the tags from the IDs
-            foreach (int tagId in image.Model.TagIds)
+            foreach (int tagId in image.TagIds)
             {
                 TagModel tag = await client.GetTagById(tagId);
 

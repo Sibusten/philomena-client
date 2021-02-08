@@ -7,6 +7,8 @@ using Sibusten.Philomena.Api.Models;
 using System.Threading;
 using Sibusten.Philomena.Client.Utilities;
 using System.Net.Http;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Sibusten.Philomena.Client
 {
@@ -99,6 +101,8 @@ namespace Sibusten.Philomena.Client
 
         public string? Hash => Model.Sha512Hash;
         public string? OriginalHash => Model.OrigSha512Hash;
+        public List<string> TagNames => Model.Tags?.ToList() ?? new List<string>();  // .ToList to prevent editing the original model list
+        public List<int> TagIds => Model.TagIds?.ToList() ?? new List<int>();  // .ToList to prevent editing the original model list
 
         public async Task<byte[]> DownloadAsync(CancellationToken cancellationToken = default, IProgress<StreamProgressInfo>? progress = null)
         {
