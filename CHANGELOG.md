@@ -3,7 +3,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog][Keep a Changelog] and this project adheres to [Semantic Versioning][Semantic Versioning].
 
-## [Unreleased]
+## [1.0.0-alpha3] - 2021-02-16
 
 ### Added
 - SvgMode option to image downloads
@@ -18,7 +18,7 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 ### Fixed
 - Download progress for files not reporting until the entire file has downloaded
 
-## [1.0.0-alpha2] - 2020-01-25
+## [1.0.0-alpha2] - 2021-01-25
 
 ### Added
 - Generic stream download methods for image searches
