@@ -14,6 +14,8 @@ namespace Sibusten.Philomena.Client
 {
     public class PhilomenaImage : IPhilomenaImage
     {
+        private const string _tempExtension = "tmp";
+
         public ImageModel Model { get; private init; }
         private readonly int _id;
         public bool IsSvgVersion { get; init; } = false;
@@ -164,18 +166,9 @@ namespace Sibusten.Philomena.Client
         public double? Duration => Model.Duration;
         public double? WilsonScore => Model.WilsonScore;
 
-        public async Task<byte[]> DownloadAsync(CancellationToken cancellationToken = default, IProgress<StreamProgressInfo>? progress = null)
+        private async Task<Stream> GetDownloadStream(CancellationToken cancellationToken, IProgress<StreamProgressInfo>? progress)
         {
-            using MemoryStream memoryStream = new MemoryStream();
-            await DownloadToAsync(memoryStream, cancellationToken, progress);
-
-            // Extract the image data from the memory stream
-            return memoryStream.ToArray();
-        }
-
-        public async Task DownloadToAsync(Stream stream, CancellationToken cancellationToken = default, IProgress<StreamProgressInfo>? progress = null)
-        {
-            using IFlurlResponse response = await DownloadUrl.GetAsync(cancellationToken, HttpCompletionOption.ResponseHeadersRead);
+            IFlurlResponse response = await DownloadUrl.GetAsync(cancellationToken, HttpCompletionOption.ResponseHeadersRead);
 
             // Attempt to read the length of the stream from the header
             long? length = null;
@@ -188,12 +181,25 @@ namespace Sibusten.Philomena.Client
             }
 
             // Open the image stream
-            using Stream downloadStream = await response.GetStreamAsync();
+            Stream downloadStream = await response.GetStreamAsync();
 
             // Create progress stream wrapper for reporting download progress
-            using StreamProgressReporter progressStream = new StreamProgressReporter(downloadStream, progress, length);
+            return new StreamProgressReporter(downloadStream, progress, length);
+        }
 
-            await progressStream.CopyToAsync(stream, cancellationToken);
+        public async Task<byte[]> DownloadAsync(CancellationToken cancellationToken = default, IProgress<StreamProgressInfo>? progress = null)
+        {
+            using MemoryStream memoryStream = new MemoryStream();
+            await DownloadToAsync(memoryStream, cancellationToken, progress);
+
+            // Extract the image data from the memory stream
+            return memoryStream.ToArray();
+        }
+
+        public async Task DownloadToAsync(Stream stream, CancellationToken cancellationToken = default, IProgress<StreamProgressInfo>? progress = null)
+        {
+            using Stream downloadStream = await GetDownloadStream(cancellationToken, progress);
+            await downloadStream.CopyToAsync(stream, cancellationToken);
         }
 
         public async Task DownloadToFileAsync(string file, CancellationToken cancellationToken = default, IProgress<StreamProgressInfo>? progress = null)
@@ -205,8 +211,17 @@ namespace Sibusten.Philomena.Client
             }
             Directory.CreateDirectory(imageDirectory);
 
-            using FileStream fileStream = File.OpenWrite(file);
-            await DownloadToAsync(fileStream, cancellationToken, progress);
+            using Stream downloadStream = await GetDownloadStream(cancellationToken, progress);
+
+            // Write to a temp file first
+            string tempFile = file + "." + _tempExtension;
+            using (FileStream tempFileStream = File.OpenWrite(tempFile))
+            {
+                await downloadStream.CopyToAsync(tempFileStream, cancellationToken);
+            }
+
+            // Move the temp file to the destination file
+            File.Move(tempFile, file, overwrite: true);
         }
     }
 }
