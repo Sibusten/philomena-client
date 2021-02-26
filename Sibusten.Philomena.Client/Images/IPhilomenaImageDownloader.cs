@@ -3,7 +3,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sibusten.Philomena.Client
+namespace Sibusten.Philomena.Client.Images
 {
     /// <summary>
     /// A delegate that determines which file to save an image to

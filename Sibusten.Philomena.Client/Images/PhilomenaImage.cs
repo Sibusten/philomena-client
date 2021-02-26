@@ -10,7 +10,7 @@ using System.Net.Http;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Sibusten.Philomena.Client
+namespace Sibusten.Philomena.Client.Images
 {
     public class PhilomenaImage : IPhilomenaImage
     {

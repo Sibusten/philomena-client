@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Sibusten.Philomena.Api.Models;
 using Sibusten.Philomena.Client.Utilities;
 
-namespace Sibusten.Philomena.Client
+namespace Sibusten.Philomena.Client.Images
 {
     public interface IPhilomenaImage
     {

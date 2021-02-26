@@ -5,10 +5,9 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using Sibusten.Philomena.Client.Utilities;
-using Sibusten.Philomena.Client.Images;
 using Sibusten.Philomena.Client.Options;
 
-namespace Sibusten.Philomena.Client
+namespace Sibusten.Philomena.Client.Images
 {
     public class PhilomenaImageDownloader : IPhilomenaImageDownloader
     {

@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Sibusten.Philomena.Api.Models;
+using Sibusten.Philomena.Client.Images;
 
 namespace Sibusten.Philomena.Client.Examples
 {

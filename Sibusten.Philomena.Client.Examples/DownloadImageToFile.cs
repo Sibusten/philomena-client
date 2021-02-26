@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
+using Sibusten.Philomena.Client.Images;
 
 namespace Sibusten.Philomena.Client.Examples
 {
