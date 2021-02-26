@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Sibusten.Philomena.Client.Extensions;
 using Sibusten.Philomena.Client.Images;
 using Sibusten.Philomena.Client.Options;
 using Sibusten.Philomena.Client.Utilities;
@@ -48,15 +49,16 @@ namespace Sibusten.Philomena.Client.Examples
             // Downloading with multiple threads and progress updates
             // Also skips downloaded images like before
             SyncProgress<ImageDownloadProgressInfo> progress = new SyncProgress<ImageDownloadProgressInfo>(DownloadProgressUpdate);
-            search = client.Search("fluttershy", new ImageSearchOptions
-            {
-                MaxImages = 100
-            });
-            downloader = new PhilomenaImageDownloader(search, new ImageDownloadOptions
-            {
-                MaxDownloadThreads = 8
-            });
-            await downloader.DownloadAllToFilesAsync(GetFileForImage, SkipImagesAlreadyDownloaded, progress: progress);
+            await client
+                .Search("fluttershy", new ImageSearchOptions
+                {
+                    MaxImages = 100
+                })
+                .GetDownloader(new ImageDownloadOptions
+                {
+                    MaxDownloadThreads = 8
+                })
+                .DownloadAllToFilesAsync(GetFileForImage, SkipImagesAlreadyDownloaded, progress: progress);
         }
 
         private string GetFileForImage(IPhilomenaImage image)

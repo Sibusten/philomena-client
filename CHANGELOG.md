@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 
 ### Changed
 - Split up `PhilomenaImageSearchQuery` to decouple logic
+    - Extension method `IPhilomenaImageSearch.GetDownloader` can be used to get a downloader from a search
 - Download images to temp files before moving to target files
 
 ## [1.0.0-alpha3] - 2021-02-16
