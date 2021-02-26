@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using Sibusten.Philomena.Api;
 
 namespace Sibusten.Philomena.Client
 {
@@ -28,12 +26,6 @@ namespace Sibusten.Philomena.Client
     /// <returns>True if the image should be downloaded</returns>
     public delegate bool ShouldDownloadImageDelegate(IPhilomenaImage image);
 
-    public struct MetadataDownloadProgressInfo
-    {
-        public int Downloaded { get; set; }
-        public int Total { get; set; }
-    }
-
     public struct ImageDownloadProgressInfo
     {
         public int ImagesDownloaded { get; set; }
@@ -49,63 +41,8 @@ namespace Sibusten.Philomena.Client
         public long? BytesTotal { get; set; }
     }
 
-    public enum SvgMode
+    public interface IPhilomenaImageDownloader
     {
-        RasterOnly,
-        SvgOnly,
-        Both
-    }
-
-    public interface IPhilomenaImageSearchQuery
-    {
-        /// <summary>
-        /// Sets the filter for the query
-        /// </summary>
-        /// <param name="filterId">The ID of the filter to use</param>
-        /// <returns>The search query</returns>
-        IPhilomenaImageSearchQuery WithFilter(int filterId);
-
-        /// <summary>
-        /// Sets the sort order for the query
-        /// </summary>
-        /// <param name="sortField">The field to sort by</param>
-        /// <param name="sortDirection">The direction to sort by</param>
-        /// <returns>The search query</returns>
-        IPhilomenaImageSearchQuery SortBy(SortField sortField, SortDirection sortDirection);
-
-        /// <summary>
-        /// Limits the number of images queried
-        /// </summary>
-        /// <param name="maxImages">The maximum number of images to query</param>
-        /// <returns>The search query</returns>
-        IPhilomenaImageSearchQuery Limit(int maxImages);
-
-        /// <summary>
-        /// Sets the maximum threads to use when downloading images
-        /// </summary>
-        /// <param name="maxDownloadThreads">The maximum threads to use when downloading images</param>
-        /// <returns>The search query</returns>
-        IPhilomenaImageSearchQuery WithMaxDownloadThreads(int maxDownloadThreads);
-
-        /// <summary>
-        /// Sets the behavior for SVG images
-        /// </summary>
-        /// <param name="svgMode">How to process SVG images</param>
-        /// <returns>The search query</returns>
-        IPhilomenaImageSearchQuery WithSvgMode(SvgMode svgMode);
-
-        /// <summary>
-        /// Enumerates over the results of the query
-        /// </summary>
-        /// <returns>The search query</returns>
-        IAsyncEnumerable<IPhilomenaImage> EnumerateResultsAsync(CancellationToken cancellationToken = default, IProgress<MetadataDownloadProgressInfo>? progress = null);
-
-        /// <summary>
-        /// Gets the first image in the query
-        /// </summary>
-        /// <returns>The first image in the query</returns>
-        Task<IPhilomenaImage> GetFirstAsync();
-
         /// <summary>
         /// Downloads all images in the query
         /// </summary>

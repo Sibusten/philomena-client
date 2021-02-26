@@ -1,4 +1,6 @@
 using System.Threading.Tasks;
+using Sibusten.Philomena.Client.Images;
+using Sibusten.Philomena.Client.Options;
 
 namespace Sibusten.Philomena.Client.Examples
 {
@@ -11,8 +13,13 @@ namespace Sibusten.Philomena.Client.Examples
             PhilomenaClient client = new PhilomenaClient("https://derpibooru.org");
 
             // Download both SVG sources and rasters
-            IPhilomenaImageSearchQuery query = client.Search("original_format:svg").WithSvgMode(SvgMode.Both).Limit(5).WithMaxDownloadThreads(4);
-            await query.DownloadAllToFilesAsync(image => $"ExampleDownloads/DownloadSvgImages/{image.Id}.{image.Format}");
+            IPhilomenaImageSearch search = client.Search("original_format:svg", new ImageSearchOptions
+            {
+                SvgMode = SvgMode.Both,
+                MaxImages = 5
+            });
+            IPhilomenaImageDownloader downloader = new PhilomenaImageDownloader(search);
+            await downloader.DownloadAllToFilesAsync(image => $"ExampleDownloads/DownloadSvgImages/{image.Id}.{image.Format}");
         }
     }
 }

@@ -3,6 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Sibusten.Philomena.Api;
 using Sibusten.Philomena.Api.Models;
+using Sibusten.Philomena.Client.Images;
+using Sibusten.Philomena.Client.Options;
 
 namespace Sibusten.Philomena.Client
 {
@@ -17,9 +19,21 @@ namespace Sibusten.Philomena.Client
             _api = new PhilomenaApi(baseUrl);
         }
 
-        public IPhilomenaImageSearchQuery Search(string query)
+        public IPhilomenaImageSearch Search(string query, ImageSearchOptions? options = null)
         {
-            return new PhilomenaImageSearchQuery(_api, query, ApiKey);
+            // Create options if not provided
+            options = options ?? new ImageSearchOptions();
+
+            // Set API Key if not overridden
+            if (options.ApiKey is null)
+            {
+                options = options with
+                {
+                    ApiKey = ApiKey
+                };
+            }
+
+            return new PagedPhilomenaImageSearch(_api, query, options);
         }
 
         public async Task<TagModel> GetTagById(int tagId)
