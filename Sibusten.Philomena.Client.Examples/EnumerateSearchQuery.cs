@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Sibusten.Philomena.Client.Extensions;
 using Sibusten.Philomena.Client.Images;
+using Sibusten.Philomena.Client.Images.Downloaders;
 using Sibusten.Philomena.Client.Options;
 using Sibusten.Philomena.Client.Utilities;
 
@@ -21,18 +22,32 @@ namespace Sibusten.Philomena.Client.Examples
             {
                 MaxImages = 5
             });
-            IPhilomenaImageDownloader downloader = new PhilomenaImageDownloader(search);
 
             Console.WriteLine("Download query simple");
 
             // Using download all method
-            await downloader.DownloadAllToFilesAsync(image => $"ExampleDownloads/EnumerateSearchQuery/{image.Id}.{image.Format}");
+            await search.DownloadAllParallel(new()
+            {
+                Downloaders = new List<IPhilomenaDownloader<IPhilomenaImage>>
+                {
+                    new PhilomenaImageFileDownloader(image => $"ExampleDownloads/EnumerateSearchQuery/{image.Id}.{image.Format}")
+                }
+            });
 
             Console.WriteLine("Download query with delegates, skipping existing images");
 
-            // Using a delegate method and a custom filter to skip images already downloaded
-            // Note that using direct query filtering methods are preferred since they will provide better performance. Don't use the custom filter for conditions like image score.
-            await downloader.DownloadAllToFilesAsync(GetFileForImage, SkipImagesAlreadyDownloaded);
+            // Use Linq to skip images already downloaded
+            // Note that filters in the search query itself are preferred since they will provide better performance. Don't use Linq filtering for conditions like image score.
+            await search
+                .BeginSearch()
+                .Where(SkipImagesAlreadyDownloaded)
+                .DownloadAllParallel(new()
+                {
+                    Downloaders = new List<IPhilomenaDownloader<IPhilomenaImage>>
+                    {
+                        new PhilomenaImageFileDownloader(GetFileForImage)
+                    }
+                });
 
             Console.WriteLine("Downloading images explicitly");
 
@@ -41,24 +56,29 @@ namespace Sibusten.Philomena.Client.Examples
             {
                 string filename = $"ExampleDownloads/EnumerateSearchQuery/{image.Id}.{image.Format}";
 
-                await image.DownloadToFileAsync(filename);
+                await image.DownloadToFile(filename);
             }
 
             Console.WriteLine("Downloading with multiple threads and progress updates");
 
             // Downloading with multiple threads and progress updates
             // Also skips downloaded images like before
-            SyncProgress<ImageDownloadProgressInfo> progress = new SyncProgress<ImageDownloadProgressInfo>(DownloadProgressUpdate);
+            SyncProgress<ImageSearchProgressInfo> progress = new SyncProgress<ImageSearchProgressInfo>(DownloadProgressUpdate);
             await client
-                .Search("fluttershy", new ImageSearchOptions
+                .Search("fluttershy", new()
                 {
                     MaxImages = 100
                 })
-                .GetDownloader(new ImageDownloadOptions
+                .BeginSearch(searchProgress: progress)
+                .Where(SkipImagesAlreadyDownloaded)
+                .DownloadAllParallel(new()
                 {
-                    MaxDownloadThreads = 8
-                })
-                .DownloadAllToFilesAsync(GetFileForImage, SkipImagesAlreadyDownloaded, progress: progress);
+                    MaxDownloadThreads = 8,
+                    Downloaders = new List<IPhilomenaDownloader<IPhilomenaImage>>
+                    {
+                        new PhilomenaImageFileDownloader(GetFileForImage)
+                    }
+                });
         }
 
         private string GetFileForImage(IPhilomenaImage image)
@@ -80,21 +100,11 @@ namespace Sibusten.Philomena.Client.Examples
             return !ImageExists(image);
         }
 
-        private int _lastImageProgress = 0;
-
-        private void DownloadProgressUpdate(ImageDownloadProgressInfo imageDownloadProgressInfo)
+        private void DownloadProgressUpdate(ImageSearchProgressInfo imageSearchProgressInfo)
         {
-            // Only write to console when images are downloaded
-            // NOTE: If more information is being reported, consider using a separate polling thread to update on an interval and having the progress report function only update a variable. This prevents slowing the download.
-            if (imageDownloadProgressInfo.ImagesDownloaded == _lastImageProgress)
-            {
-                return;
-            }
-            _lastImageProgress = imageDownloadProgressInfo.ImagesDownloaded;
-
-            // Simple progress updating to console. Progress for each download thread is also available, but not used here.
-            double percentDownloaded = (double)imageDownloadProgressInfo.ImagesDownloaded / (double)imageDownloadProgressInfo.TotalImages * 100.0;
-            Console.WriteLine($"{imageDownloadProgressInfo.ImagesDownloaded}/{imageDownloadProgressInfo.TotalImages} ({percentDownloaded:00.0}%)");
+            // Simple progress updating to console
+            double percentDownloaded = (double)imageSearchProgressInfo.Processed / (double)imageSearchProgressInfo.Total * 100.0;
+            Console.WriteLine($"{imageSearchProgressInfo.Processed}/{imageSearchProgressInfo.Total} ({percentDownloaded:00.0}%)");
         }
     }
 }

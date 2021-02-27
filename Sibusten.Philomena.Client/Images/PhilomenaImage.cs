@@ -1,12 +1,6 @@
-using Flurl;
-using Flurl.Http;
 using System;
 using System.IO;
-using System.Threading.Tasks;
 using Sibusten.Philomena.Api.Models;
-using System.Threading;
-using Sibusten.Philomena.Client.Utilities;
-using System.Net.Http;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -14,8 +8,6 @@ namespace Sibusten.Philomena.Client.Images
 {
     public class PhilomenaImage : IPhilomenaImage
     {
-        private const string _tempExtension = "tmp";
-
         public ImageModel Model { get; private init; }
         private readonly int _id;
         public bool IsSvgVersion { get; init; } = false;
@@ -66,23 +58,26 @@ namespace Sibusten.Philomena.Client.Images
             }
         }
 
-        public Url? DownloadUrl
+        public string? ShortViewUrl
         {
             get
             {
-                if (Model.Representations is null || Model.Representations.Full is null)
+                string? shortViewUrl = Model.Representations?.Full;
+
+                if (shortViewUrl is null)
                 {
                     return null;
                 }
 
                 if (IsSvgVersion)
                 {
-                    // Modify the full URL to point to the SVG image
-                    string urlWithoutExtension = Model.Representations.Full.Substring(0, Model.Representations.Full.LastIndexOf('.'));
-                    return new Url(urlWithoutExtension + ".svg");
+                    // Modify the URL to point to the SVG image
+                    string urlWithoutExtension = shortViewUrl.Substring(0, shortViewUrl.LastIndexOf('.'));
+                    return urlWithoutExtension + ".svg";
                 }
 
-                return new Url(Model.Representations.Full);
+                // Return the normal URL
+                return shortViewUrl;
             }
         }
 
@@ -90,19 +85,21 @@ namespace Sibusten.Philomena.Client.Images
         {
             get
             {
-                if (Model.ViewUrl is null)
+                string? viewUrl = Model.ViewUrl;
+                if (viewUrl is null)
                 {
                     return null;
                 }
 
                 if (IsSvgVersion)
                 {
-                    // Modify the view URL to point to the SVG image
-                    string urlWithoutExtension = Model.ViewUrl.Substring(0, Model.ViewUrl.LastIndexOf('.'));
-                    return new Url(urlWithoutExtension + ".svg");
+                    // Modify the URL to point to the SVG image
+                    string urlWithoutExtension = viewUrl.Substring(0, viewUrl.LastIndexOf('.'));
+                    return urlWithoutExtension + ".svg";
                 }
 
-                return Model.ViewUrl;
+                // Return the normal URL
+                return viewUrl;
             }
         }
 
@@ -165,63 +162,5 @@ namespace Sibusten.Philomena.Client.Images
         public bool? IsHiddenFromUsers => Model.IsHiddenFromUsers;
         public double? Duration => Model.Duration;
         public double? WilsonScore => Model.WilsonScore;
-
-        private async Task<Stream> GetDownloadStream(CancellationToken cancellationToken, IProgress<StreamProgressInfo>? progress)
-        {
-            IFlurlResponse response = await DownloadUrl.GetAsync(cancellationToken, HttpCompletionOption.ResponseHeadersRead);
-
-            // Attempt to read the length of the stream from the header
-            long? length = null;
-            if (response.Headers.TryGetFirst("Content-Length", out string lengthString))
-            {
-                if (long.TryParse(lengthString, out long parsedLength))
-                {
-                    length = parsedLength;
-                }
-            }
-
-            // Open the image stream
-            Stream downloadStream = await response.GetStreamAsync();
-
-            // Create progress stream wrapper for reporting download progress
-            return new StreamProgressReporter(downloadStream, progress, length);
-        }
-
-        public async Task<byte[]> DownloadAsync(CancellationToken cancellationToken = default, IProgress<StreamProgressInfo>? progress = null)
-        {
-            using MemoryStream memoryStream = new MemoryStream();
-            await DownloadToAsync(memoryStream, cancellationToken, progress);
-
-            // Extract the image data from the memory stream
-            return memoryStream.ToArray();
-        }
-
-        public async Task DownloadToAsync(Stream stream, CancellationToken cancellationToken = default, IProgress<StreamProgressInfo>? progress = null)
-        {
-            using Stream downloadStream = await GetDownloadStream(cancellationToken, progress);
-            await downloadStream.CopyToAsync(stream, cancellationToken);
-        }
-
-        public async Task DownloadToFileAsync(string file, CancellationToken cancellationToken = default, IProgress<StreamProgressInfo>? progress = null)
-        {
-            string? imageDirectory = Path.GetDirectoryName(file);
-            if (imageDirectory is null)
-            {
-                throw new ArgumentException("The file does not have a parent directory", nameof(file));
-            }
-            Directory.CreateDirectory(imageDirectory);
-
-            using Stream downloadStream = await GetDownloadStream(cancellationToken, progress);
-
-            // Write to a temp file first
-            string tempFile = file + "." + _tempExtension;
-            using (FileStream tempFileStream = File.OpenWrite(tempFile))
-            {
-                await downloadStream.CopyToAsync(tempFileStream, cancellationToken);
-            }
-
-            // Move the temp file to the destination file
-            File.Move(tempFile, file, overwrite: true);
-        }
     }
 }

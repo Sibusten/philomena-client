@@ -1,6 +1,8 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Sibusten.Philomena.Client.Extensions;
 using Sibusten.Philomena.Client.Images;
+using Sibusten.Philomena.Client.Images.Downloaders;
 using Sibusten.Philomena.Client.Options;
 
 namespace Sibusten.Philomena.Client.Examples
@@ -14,23 +16,34 @@ namespace Sibusten.Philomena.Client.Examples
             PhilomenaClient client = new PhilomenaClient("https://derpibooru.org");
 
             // Download both SVG sources and rasters
-            IPhilomenaImageSearch search = client.Search("original_format:svg", new ImageSearchOptions
+            IPhilomenaImageSearch search = client.Search("original_format:svg", new()
             {
                 SvgMode = SvgMode.Both,
                 MaxImages = 5
             });
-            IPhilomenaImageDownloader downloader = new PhilomenaImageDownloader(search);
-            await downloader.DownloadAllToFilesAsync(image => $"ExampleDownloads/DownloadSvgImages/{image.Id}.{image.Format}");
+            ParallelPhilomenaImageDownloader downloader = new ParallelPhilomenaImageDownloader(new()
+            {
+                Downloaders = new List<IPhilomenaDownloader<IPhilomenaImage>>
+                {
+                    new PhilomenaImageFileDownloader(image => $"ExampleDownloads/DownloadSvgImages/{image.Id}.{image.Format}")
+                }
+            });
+            await downloader.Download(search.BeginSearch());
 
             // Alternatively, with fluent extensions
             await client
-                .Search("original_format:svg", new ImageSearchOptions
+                .Search("original_format:svg", new()
                 {
                     SvgMode = SvgMode.Both,
                     MaxImages = 5
                 })
-                .GetDownloader()
-                .DownloadAllToFilesAsync(image => $"ExampleDownloads/DownloadSvgImages/{image.Id}.{image.Format}");
+                .DownloadAllParallel(new()
+                {
+                    Downloaders = new List<IPhilomenaDownloader<IPhilomenaImage>>
+                    {
+                        new PhilomenaImageFileDownloader(image => $"ExampleDownloads/DownloadSvgImages/{image.Id}.{image.Format}")
+                    }
+                });
         }
     }
 }

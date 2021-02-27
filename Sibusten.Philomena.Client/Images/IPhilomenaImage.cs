@@ -1,9 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-using Sibusten.Philomena.Client.Utilities;
 
 namespace Sibusten.Philomena.Client.Images
 {
@@ -39,6 +35,7 @@ namespace Sibusten.Philomena.Client.Images
         int? UploaderId { get; }
         int? Upvotes { get; }
         string? ViewUrl { get; }
+        string? ShortViewUrl { get; }
         bool? Processed { get; }
         string? MimeType { get; }
         bool? IsAnimated { get; }
@@ -56,23 +53,5 @@ namespace Sibusten.Philomena.Client.Images
         bool? IsHiddenFromUsers { get; }
         double? Duration { get; }
         double? WilsonScore { get; }
-
-        /// <summary>
-        /// Downloads the image
-        /// </summary>
-        /// <returns>The image data</returns>
-        Task<byte[]> DownloadAsync(CancellationToken cancellationToken = default, IProgress<StreamProgressInfo>? progress = null);
-
-        /// <summary>
-        /// Downloads the image to a stream
-        /// </summary>
-        /// <param name="stream">The stream to write the image data to</param>
-        Task DownloadToAsync(Stream stream, CancellationToken cancellationToken = default, IProgress<StreamProgressInfo>? progress = null);
-
-        /// <summary>
-        /// Downloads the image data into a file
-        /// </summary>
-        /// <param name="file">The file to save the image to</param>
-        Task DownloadToFileAsync(string file, CancellationToken cancellationToken = default, IProgress<StreamProgressInfo>? progress = null);
     }
 }

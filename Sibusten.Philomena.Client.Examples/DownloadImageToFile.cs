@@ -1,5 +1,6 @@
 using System.Linq;
 using System.Threading.Tasks;
+using Sibusten.Philomena.Client.Extensions;
 using Sibusten.Philomena.Client.Images;
 
 namespace Sibusten.Philomena.Client.Examples
@@ -15,7 +16,7 @@ namespace Sibusten.Philomena.Client.Examples
 
             string filename = $"ExampleDownloads/DownloadImageToFile/{image.Id}.{image.Format}";
 
-            await image.DownloadToFileAsync(filename);
+            await image.DownloadToFile(filename);
         }
     }
 }

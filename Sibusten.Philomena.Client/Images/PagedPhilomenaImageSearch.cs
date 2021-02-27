@@ -24,7 +24,7 @@ namespace Sibusten.Philomena.Client.Images
             _options = options ?? new ImageSearchOptions();
         }
 
-        public async IAsyncEnumerable<IPhilomenaImage> BeginSearch([EnumeratorCancellation] CancellationToken cancellationToken = default, IProgress<MetadataDownloadProgressInfo>? progress = null)
+        public async IAsyncEnumerable<IPhilomenaImage> BeginSearch([EnumeratorCancellation] CancellationToken cancellationToken = default, IProgress<ImageSearchProgressInfo>? searchProgress = null, IProgress<MetadataDownloadProgressInfo>? metadataProgress = null)
         {
             // TODO: Optimize this process and make use of multiple threads
             // TODO: Enumerate using id.gt/id.lt when possible
@@ -54,31 +54,26 @@ namespace Sibusten.Philomena.Client.Images
                     throw new InvalidOperationException("The search query did not provide a list of images");
                 }
 
-                // Update metadata progress if given
-                if (progress is not null)
+                if (search.Total is null)
                 {
-                    if (search.Total is null)
-                    {
-                        throw new InvalidOperationException("The search query did not provide a total image count");
-                    }
-
-                    // Determine how much metadata has been downloaded
-                    int metadataDownloaded = imagesProcessed + search.Images.Count;
-
-                    // Cap the total number of images downloaded at the limit
-                    int totalImagesToDownload = Math.Min(search.Total.Value, _options.MaxImages);
-
-                    // Avoid reporting more metadata downloaded than total images to download
-                    metadataDownloaded = Math.Min(metadataDownloaded, totalImagesToDownload);
-
-                    // Update progress
-                    MetadataDownloadProgressInfo progressInfo = new MetadataDownloadProgressInfo()
-                    {
-                        Downloaded = metadataDownloaded,
-                        Total = totalImagesToDownload
-                    };
-                    progress.Report(progressInfo);
+                    throw new InvalidOperationException("The search query did not provide a total image count");
                 }
+
+                // Determine how much metadata has been downloaded
+                int metadataDownloaded = imagesProcessed + search.Images.Count;
+
+                // Cap the total number of images downloaded at the limit
+                int totalImagesToDownload = Math.Min(search.Total.Value, _options.MaxImages);
+
+                // Avoid reporting more metadata downloaded than total images to download
+                metadataDownloaded = Math.Min(metadataDownloaded, totalImagesToDownload);
+
+                // Update metadata progress
+                metadataProgress?.Report(new()
+                {
+                    Downloaded = metadataDownloaded,
+                    Total = totalImagesToDownload
+                });
 
                 // Yield the images
                 foreach (ImageModel imageModel in search.Images)
@@ -109,6 +104,14 @@ namespace Sibusten.Philomena.Client.Images
                     }
 
                     imagesProcessed++;
+
+                    // Update search progress
+                    searchProgress?.Report(new()
+                    {
+                        Processed = imagesProcessed,
+                        Total = totalImagesToDownload
+                    });
+
                     if (imagesProcessed >= _options.MaxImages)
                     {
                         yield break;
