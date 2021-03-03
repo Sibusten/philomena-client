@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 
 ### Changed
 - Split up `PhilomenaImageSearchQuery` to decouple logic
-    - Add new extension methods to simplify use of the new classes
+    - Add new extension methods and fluent builders to simplify use of the new classes
 - Move image related classes to `Images` namespace
 - Download images to temp files before moving to target files
 
