@@ -4,9 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Sibusten.Philomena.Client.Extensions;
+using Sibusten.Philomena.Client.Fluent.Images;
 using Sibusten.Philomena.Client.Images;
-using Sibusten.Philomena.Client.Images.Downloaders;
-using Sibusten.Philomena.Client.Options;
 using Sibusten.Philomena.Client.Utilities;
 
 namespace Sibusten.Philomena.Client.Examples
@@ -18,21 +17,16 @@ namespace Sibusten.Philomena.Client.Examples
         public async Task RunExample()
         {
             PhilomenaClient client = new PhilomenaClient("https://derpibooru.org");
-            IPhilomenaImageSearch search = client.Search("fluttershy", new ImageSearchOptions
-            {
-                MaxImages = 5
-            });
+            PhilomenaImageSearchBuilder search = client.SearchImages("fluttershy").WithMaxImages(5);
 
             Console.WriteLine("Download query simple");
 
             // Using download all method
-            await search.DownloadAllParallel(new()
-            {
-                Downloaders = new List<IPhilomenaDownloader<IPhilomenaImage>>
-                {
-                    new PhilomenaImageFileDownloader(image => $"ExampleDownloads/EnumerateSearchQuery/{image.Id}.{image.Format}")
-                }
-            });
+            await search
+                .BeginSearch()
+                .CreateParallelDownloader()
+                    .WithImageFileDownloader(image => $"ExampleDownloads/EnumerateSearchQuery/{image.Id}.{image.Format}")
+                .BeginDownload();
 
             Console.WriteLine("Download query with delegates, skipping existing images");
 
@@ -41,13 +35,9 @@ namespace Sibusten.Philomena.Client.Examples
             await search
                 .BeginSearch()
                 .Where(SkipImagesAlreadyDownloaded)
-                .DownloadAllParallel(new()
-                {
-                    Downloaders = new List<IPhilomenaDownloader<IPhilomenaImage>>
-                    {
-                        new PhilomenaImageFileDownloader(GetFileForImage)
-                    }
-                });
+                .CreateParallelDownloader()
+                    .WithImageFileDownloader(GetFileForImage)
+                .BeginDownload();
 
             Console.WriteLine("Downloading images explicitly");
 
@@ -65,20 +55,14 @@ namespace Sibusten.Philomena.Client.Examples
             // Also skips downloaded images like before
             SyncProgress<ImageSearchProgressInfo> progress = new SyncProgress<ImageSearchProgressInfo>(DownloadProgressUpdate);
             await client
-                .Search("fluttershy", new()
-                {
-                    MaxImages = 100
-                })
+                .SearchImages("fluttershy")
+                    .WithMaxImages(100)
                 .BeginSearch(searchProgress: progress)
                 .Where(SkipImagesAlreadyDownloaded)
-                .DownloadAllParallel(new()
-                {
-                    MaxDownloadThreads = 8,
-                    Downloaders = new List<IPhilomenaDownloader<IPhilomenaImage>>
-                    {
-                        new PhilomenaImageFileDownloader(GetFileForImage)
-                    }
-                });
+                .CreateParallelDownloader()
+                    .WithMaxDownloadThreads(8)
+                    .WithImageFileDownloader(GetFileForImage)
+                .BeginDownload();
         }
 
         private string GetFileForImage(IPhilomenaImage image)

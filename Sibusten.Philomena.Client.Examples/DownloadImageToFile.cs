@@ -12,7 +12,7 @@ namespace Sibusten.Philomena.Client.Examples
         public async Task RunExample()
         {
             PhilomenaClient client = new PhilomenaClient("https://derpibooru.org");
-            IPhilomenaImage image = await client.Search("fluttershy").BeginSearch().FirstAsync();
+            IPhilomenaImage image = await client.SearchImages("fluttershy").BeginSearch().FirstAsync();
 
             string filename = $"ExampleDownloads/DownloadImageToFile/{image.Id}.{image.Format}";
 

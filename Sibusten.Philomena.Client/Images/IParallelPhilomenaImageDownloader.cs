@@ -13,6 +13,6 @@ namespace Sibusten.Philomena.Client.Images
         /// <param name="imagesToDownload">The images to download</param>
         /// <param name="cancellationToken">The cancellation token</param>
         /// <param name="progress">A list of progress reporters. There must be one progress reporter given for each download slot</param>
-        Task Download(IAsyncEnumerable<IPhilomenaImage> imagesToDownload, CancellationToken cancellationToken = default, ICollection<IProgress<DownloadProgressInfo>>? progress = null);
+        Task BeginDownload(IAsyncEnumerable<IPhilomenaImage> imagesToDownload, CancellationToken cancellationToken = default, ICollection<IProgress<DownloadProgressInfo>>? progress = null);
     }
 }

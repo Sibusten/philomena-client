@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using Sibusten.Philomena.Api.Models;
-using Sibusten.Philomena.Client.Images;
-using Sibusten.Philomena.Client.Options;
+using Sibusten.Philomena.Client.Fluent.Images;
 
 namespace Sibusten.Philomena.Client
 {
@@ -11,9 +10,8 @@ namespace Sibusten.Philomena.Client
         /// Begins a search query
         /// </summary>
         /// <param name="query">The search query</param>
-        /// <param name="options">Options for the search query</param>
         /// <returns>An image search</returns>
-        IPhilomenaImageSearch Search(string query, ImageSearchOptions? options = null);
+        PhilomenaImageSearchBuilder SearchImages(string query);
 
         /// <summary>
         /// Gets a tag by its ID

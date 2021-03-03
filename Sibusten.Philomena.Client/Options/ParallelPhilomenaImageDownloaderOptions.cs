@@ -13,6 +13,6 @@ namespace Sibusten.Philomena.Client.Options
         /// <summary>
         /// The downloaders to use for each image
         /// </summary>
-        public ICollection<IPhilomenaDownloader<IPhilomenaImage>> Downloaders = new List<IPhilomenaDownloader<IPhilomenaImage>>();
+        public IReadOnlyCollection<IPhilomenaDownloader<IPhilomenaImage>> Downloaders = new List<IPhilomenaDownloader<IPhilomenaImage>>();
     }
 }

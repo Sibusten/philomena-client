@@ -16,34 +16,14 @@ namespace Sibusten.Philomena.Client.Examples
             PhilomenaClient client = new PhilomenaClient("https://derpibooru.org");
 
             // Download both SVG sources and rasters
-            IPhilomenaImageSearch search = client.Search("original_format:svg", new()
-            {
-                SvgMode = SvgMode.Both,
-                MaxImages = 5
-            });
-            ParallelPhilomenaImageDownloader downloader = new ParallelPhilomenaImageDownloader(new()
-            {
-                Downloaders = new List<IPhilomenaDownloader<IPhilomenaImage>>
-                {
-                    new PhilomenaImageFileDownloader(image => $"ExampleDownloads/DownloadSvgImages/{image.Id}.{image.Format}")
-                }
-            });
-            await downloader.Download(search.BeginSearch());
-
-            // Alternatively, with fluent extensions
             await client
-                .Search("original_format:svg", new()
-                {
-                    SvgMode = SvgMode.Both,
-                    MaxImages = 5
-                })
-                .DownloadAllParallel(new()
-                {
-                    Downloaders = new List<IPhilomenaDownloader<IPhilomenaImage>>
-                    {
-                        new PhilomenaImageFileDownloader(image => $"ExampleDownloads/DownloadSvgImages/{image.Id}.{image.Format}")
-                    }
-                });
+                .SearchImages("original_format:svg")
+                    .WithSvgMode(SvgMode.Both)
+                    .WithMaxImages(5)
+                .BeginSearch()
+                .CreateParallelDownloader()
+                    .WithImageFileDownloader(image => $"ExampleDownloads/DownloadSvgImages/{image.Id}.{image.Format}")
+                .BeginDownload();
         }
     }
 }
