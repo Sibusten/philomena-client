@@ -16,6 +16,11 @@ namespace Sibusten.Philomena.Client.Images
         /// <value></value>
         bool IsSvgVersion { get; }
 
+        /// <summary>
+        /// Raw metadata received from the API
+        /// </summary>
+        string RawMetadata { get; }
+
         int Id { get; }
         string? Name { get; }
         string? OriginalName { get; }

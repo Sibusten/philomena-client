@@ -48,6 +48,21 @@ namespace Sibusten.Philomena.Client.Fluent.Images
         }
 
         /// <summary>
+        /// Adds an image metadata file downloader
+        /// </summary>
+        /// <param name="getFileForImage">A delegate to get the file for an image</param>
+        public ParallelPhilomenaImageDownloaderBuilder WithImageMetadataFileDownloader(GetFileForImageDelegate getFileForImage)
+        {
+            _options = _options with
+            {
+                Downloaders = _options.Downloaders.Append(
+                    new PhilomenaImageMetadataFileDownloader(getFileForImage)
+                ).ToList()
+            };
+            return this;
+        }
+
+        /// <summary>
         /// Begins the parallel download
         /// </summary>
         /// <param name="cancellationToken">The cancellation token</param>

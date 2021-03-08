@@ -62,6 +62,7 @@ namespace Sibusten.Philomena.Client.Examples
                 .CreateParallelDownloader()
                     .WithMaxDownloadThreads(8)
                     .WithImageFileDownloader(GetFileForImage)
+                    .WithImageMetadataFileDownloader(GetMetadataFileForImage)
                 .BeginDownload();
         }
 
@@ -69,6 +70,12 @@ namespace Sibusten.Philomena.Client.Examples
         {
             // A custom file naming scheme could be used here to generate file names
             return $"ExampleDownloads/EnumerateSearchQuery/{image.Id}.{image.Format}";
+        }
+
+        private string GetMetadataFileForImage(IPhilomenaImage image)
+        {
+            // A custom file naming scheme could be used here to generate file names
+            return $"ExampleDownloads/EnumerateSearchQuery/{image.Id}.json";
         }
 
         private bool ImageExists(IPhilomenaImage image)

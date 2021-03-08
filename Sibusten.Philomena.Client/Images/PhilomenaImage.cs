@@ -3,6 +3,7 @@ using System.IO;
 using Sibusten.Philomena.Api.Models;
 using System.Collections.Generic;
 using System.Linq;
+using Newtonsoft.Json;
 
 namespace Sibusten.Philomena.Client.Images
 {
@@ -28,6 +29,8 @@ namespace Sibusten.Philomena.Client.Images
             Model = model;
             _id = model.Id.Value;
         }
+
+        public string RawMetadata => JsonConvert.SerializeObject(Model);
 
         public int Id => _id;
 
