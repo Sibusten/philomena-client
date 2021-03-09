@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Sibusten.Philomena.Client.Options;
 using System.Collections.Concurrent;
+using Flurl.Http;
 
 namespace Sibusten.Philomena.Client.Images
 {
@@ -44,7 +45,19 @@ namespace Sibusten.Philomena.Client.Images
                 // Run configured downloads
                 foreach (IPhilomenaDownloader<IPhilomenaImage> downloader in _options.Downloaders)
                 {
-                    await downloader.Download(image, cancellationToken, imageProgress);
+                    while (true)
+                    {
+                        try
+                        {
+                            await downloader.Download(image, cancellationToken, imageProgress);
+                            break;
+                        }
+                        catch (FlurlHttpException)
+                        {
+                            // TODO: report errors
+                            // TODO: Exponential delay
+                        }
+                    }
                 }
 
                 // Make progress available if one was taken
