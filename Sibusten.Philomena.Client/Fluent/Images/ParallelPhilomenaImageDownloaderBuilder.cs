@@ -67,7 +67,7 @@ namespace Sibusten.Philomena.Client.Fluent.Images
         /// </summary>
         /// <param name="cancellationToken">The cancellation token</param>
         /// <param name="progress">A list of progress reporters. There must be one progress reporter given for each download slot</param>
-        public async Task BeginDownload(CancellationToken cancellationToken = default, ICollection<IProgress<DownloadProgressInfo>>? progress = null)
+        public async Task BeginDownload(CancellationToken cancellationToken = default, IReadOnlyCollection<IProgress<DownloadProgressInfo>>? progress = null)
         {
             ParallelPhilomenaImageDownloader downloader = new ParallelPhilomenaImageDownloader(_options);
             await downloader.BeginDownload(_imagesToDownload, cancellationToken, progress);

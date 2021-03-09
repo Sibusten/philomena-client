@@ -18,7 +18,7 @@ namespace Sibusten.Philomena.Client.Images
             _options = options ?? new ParallelPhilomenaImageDownloaderOptions();
         }
 
-        public async Task BeginDownload(IAsyncEnumerable<IPhilomenaImage> imagesToDownload, CancellationToken cancellationToken = default, ICollection<IProgress<DownloadProgressInfo>>? progress = null)
+        public async Task BeginDownload(IAsyncEnumerable<IPhilomenaImage> imagesToDownload, CancellationToken cancellationToken = default, IReadOnlyCollection<IProgress<DownloadProgressInfo>>? progress = null)
         {
             ConcurrentBag<IProgress<DownloadProgressInfo>>? availableProgress = null;
 
