@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 ## [Unreleased]
 ### Added
 - Retries for failed downloads
+- Image metadata file downloader
 
 ### Changed
 - Split up `PhilomenaImageSearchQuery` to decouple logic
