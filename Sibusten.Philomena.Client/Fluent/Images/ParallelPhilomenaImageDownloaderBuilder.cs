@@ -14,9 +14,11 @@ namespace Sibusten.Philomena.Client.Fluent.Images
         private ParallelPhilomenaImageDownloaderOptions _options;
         private IAsyncEnumerable<IPhilomenaImage> _imagesToDownload;
 
-        public ParallelPhilomenaImageDownloaderBuilder(IAsyncEnumerable<IPhilomenaImage> imagesToDownload)
+        public ParallelPhilomenaImageDownloaderBuilder(IAsyncEnumerable<IPhilomenaImage> imagesToDownload) : this(imagesToDownload, options: new()) { }
+
+        private ParallelPhilomenaImageDownloaderBuilder(IAsyncEnumerable<IPhilomenaImage> imagesToDownload, ParallelPhilomenaImageDownloaderOptions options)
         {
-            _options = new();
+            _options = options;
             _imagesToDownload = imagesToDownload;
         }
 
@@ -25,41 +27,38 @@ namespace Sibusten.Philomena.Client.Fluent.Images
         /// </summary>
         public ParallelPhilomenaImageDownloaderBuilder WithMaxDownloadThreads(int maxDownloadThreads)
         {
-            _options = _options with
+            return new(_imagesToDownload, _options with
             {
                 MaxDownloadThreads = maxDownloadThreads
-            };
-            return this;
+            });
         }
 
         /// <summary>
         /// Adds an image file downloader
         /// </summary>
         /// <param name="getFileForImage">A delegate to get the file for an image</param>
-        public ParallelPhilomenaImageDownloaderBuilder WithImageFileDownloader(GetFileForImageDelegate getFileForImage)
+        public WithDownloader WithImageFileDownloader(GetFileForImageDelegate getFileForImage)
         {
-            _options = _options with
+            return new(_imagesToDownload, _options with
             {
                 Downloaders = _options.Downloaders.Append(
                     new PhilomenaImageFileDownloader(getFileForImage)
                 ).ToList()
-            };
-            return this;
+            });
         }
 
         /// <summary>
         /// Adds an image metadata file downloader
         /// </summary>
         /// <param name="getFileForImage">A delegate to get the file for an image</param>
-        public ParallelPhilomenaImageDownloaderBuilder WithImageMetadataFileDownloader(GetFileForImageDelegate getFileForImage)
+        public WithDownloader WithImageMetadataFileDownloader(GetFileForImageDelegate getFileForImage)
         {
-            _options = _options with
+            return new(_imagesToDownload, _options with
             {
                 Downloaders = _options.Downloaders.Append(
                     new PhilomenaImageMetadataFileDownloader(getFileForImage)
                 ).ToList()
-            };
-            return this;
+            });
         }
 
         /// <summary>
@@ -71,6 +70,28 @@ namespace Sibusten.Philomena.Client.Fluent.Images
         {
             ParallelPhilomenaImageDownloader downloader = new ParallelPhilomenaImageDownloader(_options);
             await downloader.BeginDownload(_imagesToDownload, cancellationToken, progress);
+        }
+
+        public class WithDownloader : ParallelPhilomenaImageDownloaderBuilder
+        {
+            public WithDownloader(IAsyncEnumerable<IPhilomenaImage> imagesToDownload, ParallelPhilomenaImageDownloaderOptions options) : base(imagesToDownload, options) { }
+
+            /// <summary>
+            /// Adds a condition to the last downloader added
+            /// </summary>
+            /// <param name="shouldDownloadImage">A delegate that returns true if an image should be downloaded</param>
+            public WithDownloader WithDownloadCondition(ShouldDownloadImageDelegate shouldDownloadImage)
+            {
+                // Wrap the last downloader in a conditional downloader
+                var lastDownloader = _options.Downloaders.Last();
+                var conditionalDownloader = new ConditionalImageDownloader(shouldDownloadImage, lastDownloader);
+                var downloadersExceptLast = _options.Downloaders.Take(_options.Downloaders.Count - 1);
+
+                return new(_imagesToDownload, _options with
+                {
+                    Downloaders = downloadersExceptLast.Append(conditionalDownloader).ToList()
+                });
+            }
         }
     }
 }
