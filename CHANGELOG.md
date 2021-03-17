@@ -14,6 +14,9 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 - Move image related classes to `Images` namespace
 - Download images to temp files before moving to target files
 
+### Fixed
+- Cancellation of image searches
+
 ## [1.0.0-alpha3] - 2021-02-16
 
 ### Added
