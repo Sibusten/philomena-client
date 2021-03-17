@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Serilog;
 using Sibusten.Philomena.Client.Examples;
 
 namespace Sibusten.Philomena.Client.Examples
@@ -17,6 +19,17 @@ namespace Sibusten.Philomena.Client.Examples
                 new PauseAndCancelImageDownload(),
                 new GetTagsForImage(),
             };
+
+            // Set up logging
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .WriteTo.Console()
+                .CreateLogger();
+            Sibusten.Philomena.Client.Logging.Logger.Factory = LoggerFactory.Create(configure =>
+            {
+                configure.SetMinimumLevel(LogLevel.Debug);
+                configure.AddSerilog();
+            });
 
             while (true)
             {

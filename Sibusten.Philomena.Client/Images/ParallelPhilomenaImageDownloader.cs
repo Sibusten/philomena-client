@@ -7,15 +7,21 @@ using System.Threading.Tasks;
 using Sibusten.Philomena.Client.Options;
 using System.Collections.Concurrent;
 using Flurl.Http;
+using Sibusten.Philomena.Client.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace Sibusten.Philomena.Client.Images
 {
     public class ParallelPhilomenaImageDownloader : IParallelPhilomenaImageDownloader
     {
+        private ILogger _logger;
+
         private ParallelPhilomenaImageDownloaderOptions _options;
 
         public ParallelPhilomenaImageDownloader(ParallelPhilomenaImageDownloaderOptions? options = null)
         {
+            _logger = Logger.Factory.CreateLogger(GetType());
+
             _options = options ?? new ParallelPhilomenaImageDownloaderOptions();
         }
 
@@ -46,6 +52,8 @@ namespace Sibusten.Philomena.Client.Images
 
         private async Task DownloadImage(IPhilomenaImage image, ConcurrentBag<IProgress<DownloadProgressInfo>>? availableProgress, CancellationToken cancellationToken)
         {
+            _logger.LogDebug("Downloading image {ImageId}", image.Id);
+
             // Take a progress slot for this image
             IProgress<DownloadProgressInfo>? imageProgress = null;
             availableProgress?.TryTake(out imageProgress);
@@ -62,8 +70,9 @@ namespace Sibusten.Philomena.Client.Images
                         await downloader.Download(image, cancellationToken, imageProgress);
                         break;
                     }
-                    catch (FlurlHttpException)
+                    catch (FlurlHttpException ex)
                     {
+                        _logger.LogWarning(ex, "Image {ImageId} failed to download", image.Id);
                         // TODO: report errors
                         // TODO: Exponential delay
                     }

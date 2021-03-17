@@ -2,6 +2,8 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Sibusten.Philomena.Client.Logging;
 using Sibusten.Philomena.Client.Utilities;
 
 namespace Sibusten.Philomena.Client.Images.Downloaders
@@ -15,12 +17,16 @@ namespace Sibusten.Philomena.Client.Images.Downloaders
 
     public class PhilomenaImageFileDownloader : PhilomenaImageDownloader
     {
+        private ILogger _logger;
+
         private const string _tempExtension = "tmp";
 
         private readonly GetFileForImageDelegate _getFileForImage;
 
         public PhilomenaImageFileDownloader(GetFileForImageDelegate getFileForImage)
         {
+            _logger = Logger.Factory.CreateLogger(GetType());
+
             _getFileForImage = getFileForImage;
         }
 
@@ -49,6 +55,8 @@ namespace Sibusten.Philomena.Client.Images.Downloaders
 
             // Get the download stream for the image
             using Stream downloadStream = await GetDownloadStream(downloadItem, cancellationToken, streamProgress);
+
+            _logger.LogDebug("Saving image {ImageId} to {File}", downloadItem.Id, file);
 
             // Write to a temp file first
             string tempFile = file + "." + _tempExtension;

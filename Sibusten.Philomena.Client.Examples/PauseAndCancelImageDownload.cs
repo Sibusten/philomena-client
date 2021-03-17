@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Serilog;
 using Sibusten.Philomena.Client.Extensions;
 using Sibusten.Philomena.Client.Images;
 using Sibusten.Philomena.Client.Utilities;
@@ -35,27 +36,27 @@ namespace Sibusten.Philomena.Client.Examples
                 }
                 catch (OperationCanceledException)
                 {
-                    Console.WriteLine("Download cancelled");
+                    Log.Information("Download cancelled");
                 }
             });
 
             // Wait a bit before canceling
-            Console.WriteLine("Downloading some images");
+            Log.Information("Downloading some images");
             await Task.Delay(3000);
 
             // Cancel the download
-            Console.WriteLine("Cancelling the download");
+            Log.Information("Cancelling the download");
             cts.Cancel();
 
             // Wait for the download thread to finish
             await downloadTask;
 
-            Console.WriteLine("Download ended");
+            Log.Information("Download ended");
         }
 
         private void ProgressReport(ImageSearchProgressInfo downloadProgress)
         {
-            Console.WriteLine($"{downloadProgress.Processed}/{downloadProgress.Total}");
+            Log.Information("{ImagesProcessed}/{ImagesTotal}", downloadProgress.Processed, downloadProgress.Total);
         }
     }
 }

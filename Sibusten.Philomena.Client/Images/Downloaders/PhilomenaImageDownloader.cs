@@ -4,12 +4,21 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Flurl.Http;
+using Microsoft.Extensions.Logging;
+using Sibusten.Philomena.Client.Logging;
 using Sibusten.Philomena.Client.Utilities;
 
 namespace Sibusten.Philomena.Client.Images.Downloaders
 {
     public abstract class PhilomenaImageDownloader : IPhilomenaDownloader<IPhilomenaImage>
     {
+        private ILogger _logger;
+
+        public PhilomenaImageDownloader()
+        {
+            _logger = Logger.Factory.CreateLogger(GetType());
+        }
+
         public abstract Task Download(IPhilomenaImage downloadItem, CancellationToken cancellationToken = default, IProgress<DownloadProgressInfo>? progress = null);
 
         protected async Task<Stream> GetDownloadStream(IPhilomenaImage image, CancellationToken cancellationToken, IProgress<StreamProgressInfo>? progress)
@@ -28,6 +37,8 @@ namespace Sibusten.Philomena.Client.Images.Downloaders
 
             // Open the image stream
             Stream downloadStream = await response.GetStreamAsync();
+
+            _logger.LogDebug("Opened download stream for image {ImageId} with size {DownloadSize}: {DownloadUrl}", image.Id, length, image.ShortViewUrl);
 
             // Create progress stream wrapper for reporting download progress
             return new StreamProgressReporter(downloadStream, progress, length);

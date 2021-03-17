@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Serilog;
 using Sibusten.Philomena.Api.Models;
 using Sibusten.Philomena.Client.Images;
 
@@ -17,14 +18,14 @@ namespace Sibusten.Philomena.Client.Examples
             // Get an image
             IPhilomenaImage image = await client.SearchImages("fluttershy").BeginSearch().FirstAsync();
 
-            Console.WriteLine($"Tags for image {image.Id}:");
+            Log.Information("Listing tags for image {ImageId}", image.Id);
 
             // Get the tags from the IDs
             foreach (int tagId in image.TagIds)
             {
                 TagModel tag = await client.GetTagById(tagId);
 
-                Console.WriteLine($"{tagId}: {tag.Name} (On {tag.Images} images)");
+                Log.Information("{TagId}: {TagName} (On {TagImages} images)", tagId, tag.Name, tag.Images);
             }
         }
     }

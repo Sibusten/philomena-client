@@ -3,17 +3,23 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+using Sibusten.Philomena.Client.Logging;
 
 namespace Sibusten.Philomena.Client.Images.Downloaders
 {
     public class PhilomenaImageMetadataFileDownloader : PhilomenaImageDownloader
     {
+        private ILogger _logger;
+
         private const string _tempExtension = "tmp";
 
         private readonly GetFileForImageDelegate _getFileForImage;
 
         public PhilomenaImageMetadataFileDownloader(GetFileForImageDelegate getFileForImage)
         {
+            _logger = Logger.Factory.CreateLogger(GetType());
+
             _getFileForImage = getFileForImage;
         }
 
@@ -41,6 +47,8 @@ namespace Sibusten.Philomena.Client.Images.Downloaders
             }
 
             reportProgress(isFinished: false);
+
+            _logger.LogDebug("Saving image {ImageId} metadata to {File}", downloadItem.Id, file);
 
             // Write to a temp file first
             string tempFile = file + "." + _tempExtension;
