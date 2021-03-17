@@ -36,38 +36,45 @@ namespace Sibusten.Philomena.Client.Images
             }
 
             // Download the images using as many threads as configured
-            await imagesToDownload.ParallelForEachAsync(async (IPhilomenaImage image) =>
-            {
-                // Take a progress slot for this image
-                IProgress<DownloadProgressInfo>? imageProgress = null;
-                availableProgress?.TryTake(out imageProgress);
+            await imagesToDownload.ParallelForEachAsync
+            (
+                async (image) => await DownloadImage(image, availableProgress, cancellationToken),
+                maxDegreeOfParallelism: _options.MaxDownloadThreads,
+                cancellationToken: cancellationToken
+            );
+        }
 
-                // Run configured downloads
-                foreach (IPhilomenaDownloader<IPhilomenaImage> downloader in _options.Downloaders)
+        private async Task DownloadImage(IPhilomenaImage image, ConcurrentBag<IProgress<DownloadProgressInfo>>? availableProgress, CancellationToken cancellationToken)
+        {
+            // Take a progress slot for this image
+            IProgress<DownloadProgressInfo>? imageProgress = null;
+            availableProgress?.TryTake(out imageProgress);
+
+            // Run configured downloads
+            foreach (IPhilomenaDownloader<IPhilomenaImage> downloader in _options.Downloaders)
+            {
+                while (true)
                 {
-                    while (true)
+                    cancellationToken.ThrowIfCancellationRequested();
+
+                    try
                     {
-                        try
-                        {
-                            await downloader.Download(image, cancellationToken, imageProgress);
-                            break;
-                        }
-                        catch (FlurlHttpException)
-                        {
-                            // TODO: report errors
-                            // TODO: Exponential delay
-                        }
+                        await downloader.Download(image, cancellationToken, imageProgress);
+                        break;
+                    }
+                    catch (FlurlHttpException)
+                    {
+                        // TODO: report errors
+                        // TODO: Exponential delay
                     }
                 }
+            }
 
-                // Make progress available if one was taken
-                if (imageProgress is not null)
-                {
-                    availableProgress!.Add(imageProgress);
-                }
-            },
-            maxDegreeOfParallelism: _options.MaxDownloadThreads,
-            cancellationToken: cancellationToken);
+            // Make progress available if one was taken
+            if (imageProgress is not null)
+            {
+                availableProgress!.Add(imageProgress);
+            }
         }
     }
 }

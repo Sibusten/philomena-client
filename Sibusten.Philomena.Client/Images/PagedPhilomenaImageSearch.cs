@@ -47,7 +47,7 @@ namespace Sibusten.Philomena.Client.Images
             do
             {
                 // Get the current page of images
-                search = await _api.SearchImagesAsync(_query, page, _perPage, _options.SortOptions?.SortField, _options.SortOptions?.SortDirection, _options.FilterId, _options.ApiKey, _randomSeed);
+                search = await _api.SearchImagesAsync(_query, page, _perPage, _options.SortOptions?.SortField, _options.SortOptions?.SortDirection, _options.FilterId, _options.ApiKey, _randomSeed, cancellationToken);
 
                 if (search.Images is null)
                 {
