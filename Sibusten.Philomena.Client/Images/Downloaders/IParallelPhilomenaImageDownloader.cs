@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sibusten.Philomena.Client.Images
+namespace Sibusten.Philomena.Client.Images.Downloaders
 {
     public interface IParallelPhilomenaImageDownloader
     {

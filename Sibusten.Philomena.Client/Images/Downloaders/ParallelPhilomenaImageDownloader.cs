@@ -10,7 +10,7 @@ using Flurl.Http;
 using Sibusten.Philomena.Client.Logging;
 using Microsoft.Extensions.Logging;
 
-namespace Sibusten.Philomena.Client.Images
+namespace Sibusten.Philomena.Client.Images.Downloaders
 {
     public class ParallelPhilomenaImageDownloader : IParallelPhilomenaImageDownloader
     {
