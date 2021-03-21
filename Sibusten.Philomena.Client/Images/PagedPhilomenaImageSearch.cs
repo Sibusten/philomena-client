@@ -94,6 +94,14 @@ namespace Sibusten.Philomena.Client.Images
                 {
                     IPhilomenaImage image = new PhilomenaImage(imageModel);
 
+                    // Skip images that do not yet have generated thumbnails
+                    if (!(image.ThumbnailsGenerated ?? false))
+                    {
+                        _logger.LogDebug("Skipping image {ImageId}: Thumbnails not generated", image.Id);
+
+                        continue;
+                    }
+
                     if (image.IsSvgImage)
                     {
                         _logger.LogDebug("Image {ImageId} is an SVG image", image.Id);
