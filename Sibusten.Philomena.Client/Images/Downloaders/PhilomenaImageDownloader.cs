@@ -21,6 +21,14 @@ namespace Sibusten.Philomena.Client.Images.Downloaders
 
         public abstract Task Download(IPhilomenaImage downloadItem, CancellationToken cancellationToken = default, IProgress<DownloadProgressInfo>? progress = null);
 
+        /// <summary>
+        /// Gets a stream for downloading an image
+        /// </summary>
+        /// <param name="image">The image to download</param>
+        /// <param name="cancellationToken">The cancellation token</param>
+        /// <param name="progress">The progress of the image download</param>
+        /// <exception cref="FlurlHttpException">Thrown when the image fails to download</exception>
+        /// <returns>A stream for downloading an image</returns>
         protected async Task<Stream> GetDownloadStream(IPhilomenaImage image, CancellationToken cancellationToken, IProgress<StreamProgressInfo>? progress)
         {
             IFlurlResponse response = await image.ShortViewUrl.GetAsync(cancellationToken, HttpCompletionOption.ResponseHeadersRead);

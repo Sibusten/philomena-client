@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Flurl.Http;
 using Microsoft.Extensions.Logging;
 using Sibusten.Philomena.Client.Logging;
 using Sibusten.Philomena.Client.Utilities;
@@ -32,41 +33,48 @@ namespace Sibusten.Philomena.Client.Images.Downloaders
 
         public override async Task Download(IPhilomenaImage downloadItem, CancellationToken cancellationToken = default, IProgress<DownloadProgressInfo>? progress = null)
         {
-            string file = _getFileForImage(downloadItem);
-
-            // Create directory for image download
-            string? imageDirectory = Path.GetDirectoryName(file);
-            if (imageDirectory is null)
+            try
             {
-                throw new DirectoryNotFoundException($"The file does not have a parent directory: {file}");
-            }
-            Directory.CreateDirectory(imageDirectory);
+                string file = _getFileForImage(downloadItem);
 
-            // Create stream progress info
-            IProgress<StreamProgressInfo> streamProgress = new SyncProgress<StreamProgressInfo>(streamProgress =>
-            {
-                progress?.Report(new DownloadProgressInfo
+                // Create directory for image download
+                string? imageDirectory = Path.GetDirectoryName(file);
+                if (imageDirectory is null)
                 {
-                    Current = streamProgress.BytesRead,
-                    Total = streamProgress.BytesTotal,
-                    Action = downloadItem.Id.ToString(),
+                    throw new DirectoryNotFoundException($"The file does not have a parent directory: {file}");
+                }
+                Directory.CreateDirectory(imageDirectory);
+
+                // Create stream progress info
+                IProgress<StreamProgressInfo> streamProgress = new SyncProgress<StreamProgressInfo>(streamProgress =>
+                {
+                    progress?.Report(new DownloadProgressInfo
+                    {
+                        Current = streamProgress.BytesRead,
+                        Total = streamProgress.BytesTotal,
+                        Action = downloadItem.Id.ToString(),
+                    });
                 });
-            });
 
-            // Get the download stream for the image
-            using Stream downloadStream = await GetDownloadStream(downloadItem, cancellationToken, streamProgress);
+                // Get the download stream for the image
+                using Stream downloadStream = await GetDownloadStream(downloadItem, cancellationToken, streamProgress);
 
-            _logger.LogDebug("Saving image {ImageId} to {File}", downloadItem.Id, file);
+                _logger.LogDebug("Saving image {ImageId} to {File}", downloadItem.Id, file);
 
-            // Write to a temp file first
-            string tempFile = file + "." + _tempExtension;
-            using (FileStream tempFileStream = File.OpenWrite(tempFile))
-            {
-                await downloadStream.CopyToAsync(tempFileStream, cancellationToken);
+                // Write to a temp file first
+                string tempFile = file + "." + _tempExtension;
+                using (FileStream tempFileStream = File.OpenWrite(tempFile))
+                {
+                    await downloadStream.CopyToAsync(tempFileStream, cancellationToken);
+                }
+
+                // Move the temp file to the destination file
+                File.Move(tempFile, file, overwrite: true);
             }
-
-            // Move the temp file to the destination file
-            File.Move(tempFile, file, overwrite: true);
+            catch (Exception ex) when (ex is FlurlHttpException or IOException)
+            {
+                _logger.LogWarning(ex, "Failed to download image {ImageId}", downloadItem.Id);
+            }
         }
     }
 }

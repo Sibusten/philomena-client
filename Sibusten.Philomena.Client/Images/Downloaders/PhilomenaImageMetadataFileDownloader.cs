@@ -25,39 +25,46 @@ namespace Sibusten.Philomena.Client.Images.Downloaders
 
         public override async Task Download(IPhilomenaImage downloadItem, CancellationToken cancellationToken = default, IProgress<DownloadProgressInfo>? progress = null)
         {
-            string file = _getFileForImage(downloadItem);
-
-            // Create directory for image download
-            string? imageDirectory = Path.GetDirectoryName(file);
-            if (imageDirectory is null)
+            try
             {
-                throw new DirectoryNotFoundException($"The file does not have a parent directory: {file}");
-            }
-            Directory.CreateDirectory(imageDirectory);
+                string file = _getFileForImage(downloadItem);
 
-            // Metadata is already downloaded, so just report 0 or 1 for progress
-            void reportProgress(bool isFinished)
-            {
-                progress?.Report(new DownloadProgressInfo
+                // Create directory for image download
+                string? imageDirectory = Path.GetDirectoryName(file);
+                if (imageDirectory is null)
                 {
-                    Current = isFinished ? 1 : 0,
-                    Total = 1,
-                    Action = $"{downloadItem.Id} Metadata",
-                });
+                    throw new DirectoryNotFoundException($"The file does not have a parent directory: {file}");
+                }
+                Directory.CreateDirectory(imageDirectory);
+
+                // Metadata is already downloaded, so just report 0 or 1 for progress
+                void reportProgress(bool isFinished)
+                {
+                    progress?.Report(new DownloadProgressInfo
+                    {
+                        Current = isFinished ? 1 : 0,
+                        Total = 1,
+                        Action = $"{downloadItem.Id} Metadata",
+                    });
+                }
+
+                reportProgress(isFinished: false);
+
+                _logger.LogDebug("Saving image {ImageId} metadata to {File}", downloadItem.Id, file);
+
+                // Write to a temp file first
+                string tempFile = file + "." + _tempExtension;
+                await File.WriteAllTextAsync(tempFile, downloadItem.RawMetadata, Encoding.UTF8, cancellationToken);
+
+                // Move the temp file to the destination file
+                File.Move(tempFile, file, overwrite: true);
+
+                reportProgress(isFinished: true);
             }
-
-            reportProgress(isFinished: false);
-
-            _logger.LogDebug("Saving image {ImageId} metadata to {File}", downloadItem.Id, file);
-
-            // Write to a temp file first
-            string tempFile = file + "." + _tempExtension;
-            await File.WriteAllTextAsync(tempFile, downloadItem.RawMetadata, Encoding.UTF8, cancellationToken);
-
-            // Move the temp file to the destination file
-            File.Move(tempFile, file, overwrite: true);
-
-            reportProgress(isFinished: true);
+            catch (IOException ex)
+            {
+                _logger.LogWarning(ex, "Failed to download image {ImageId} metadata", downloadItem.Id);
+            }
         }
     }
 }
