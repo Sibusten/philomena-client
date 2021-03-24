@@ -61,22 +61,9 @@ namespace Sibusten.Philomena.Client.Images.Downloaders
             // Run configured downloads
             foreach (IPhilomenaDownloader<IPhilomenaImage> downloader in _options.Downloaders)
             {
-                while (true)
-                {
-                    cancellationToken.ThrowIfCancellationRequested();
+                cancellationToken.ThrowIfCancellationRequested();
 
-                    try
-                    {
-                        await downloader.Download(image, cancellationToken, imageProgress);
-                        break;
-                    }
-                    catch (FlurlHttpException ex)
-                    {
-                        _logger.LogWarning(ex, "Image {ImageId} failed to download", image.Id);
-                        // TODO: report errors
-                        // TODO: Exponential delay
-                    }
-                }
+                await downloader.Download(image, cancellationToken, imageProgress);
             }
 
             // Make progress available if one was taken

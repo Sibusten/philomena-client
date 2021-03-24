@@ -31,6 +31,9 @@ namespace Sibusten.Philomena.Client.Examples
                 configure.AddSerilog();
             });
 
+            // Configure retry policies
+            PhilomenaClientRetryLogic.UseDefaultHttpRetryLogic();
+
             while (true)
             {
                 Console.WriteLine();
