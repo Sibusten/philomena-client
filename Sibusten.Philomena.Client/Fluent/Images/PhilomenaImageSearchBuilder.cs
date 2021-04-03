@@ -20,10 +20,13 @@ namespace Sibusten.Philomena.Client.Fluent.Images
             _query = query;
         }
 
-        public IAsyncEnumerable<IPhilomenaImage> BeginSearch(CancellationToken cancellationToken = default, IProgress<ImageSearchProgressInfo>? searchProgress = null, IProgress<MetadataDownloadProgressInfo>? metadataProgress = null)
+        /// <summary>
+        /// Builds the search
+        /// </summary>
+        public IPhilomenaImageSearch Build()
         {
-            PagedPhilomenaImageSearch search = new PagedPhilomenaImageSearch(_api, _query, _options);
-            return search.BeginSearch(cancellationToken, searchProgress, metadataProgress);
+            // TODO: Allow changing what type of search to use (page-based, id-based, parallel)
+            return new PageBasedPhilomenaImageSearch(_api, _query, _options);
         }
 
         /// <summary>

@@ -10,7 +10,7 @@ using Sibusten.Philomena.Client.Utilities;
 
 namespace Sibusten.Philomena.Client.Images.Downloaders
 {
-    public abstract class PhilomenaImageDownloader : IPhilomenaDownloader<IPhilomenaImage>
+    public abstract class PhilomenaImageDownloader : IPhilomenaImageDownloader
     {
         private ILogger _logger;
 
@@ -19,7 +19,7 @@ namespace Sibusten.Philomena.Client.Images.Downloaders
             _logger = Logger.Factory.CreateLogger(GetType());
         }
 
-        public abstract Task Download(IPhilomenaImage downloadItem, CancellationToken cancellationToken = default, IProgress<DownloadProgressInfo>? progress = null);
+        public abstract Task Download(IPhilomenaImage downloadItem, CancellationToken cancellationToken = default, IProgress<PhilomenaImageDownloadProgressInfo>? progress = null);
 
         /// <summary>
         /// Gets a stream for downloading an image

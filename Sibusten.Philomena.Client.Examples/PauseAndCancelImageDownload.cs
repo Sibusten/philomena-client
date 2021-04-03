@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Serilog;
 using Sibusten.Philomena.Client.Extensions;
-using Sibusten.Philomena.Client.Images;
+using Sibusten.Philomena.Client.Images.Downloaders;
 using Sibusten.Philomena.Client.Utilities;
 
 namespace Sibusten.Philomena.Client.Examples
@@ -19,7 +19,7 @@ namespace Sibusten.Philomena.Client.Examples
 
             using CancellationTokenSource cts = new CancellationTokenSource();
 
-            SyncProgress<ImageSearchProgressInfo> searchProgress = new SyncProgress<ImageSearchProgressInfo>(ProgressReport);
+            SyncProgress<PhilomenaImageSearchDownloadProgressInfo> searchProgress = new SyncProgress<PhilomenaImageSearchDownloadProgressInfo>(ProgressReport);
 
             // Run the download on another thread
             Task downloadTask = Task.Run(async () =>
@@ -27,11 +27,12 @@ namespace Sibusten.Philomena.Client.Examples
                 try
                 {
                     await client
-                        .SearchImages("fluttershy")
+                        .GetImageSearch("fluttershy", o => o
                             .WithMaxImages(100)
-                        .BeginSearch(cts.Token, searchProgress: searchProgress)
-                        .CreateParallelDownloader()
+                        )
+                        .CreateParallelDownloader(maxDownloadThreads: 1, o => o
                             .WithImageFileDownloader(image => Path.Join("ExampleDownloads", "PauseAndCancelImageDownload", $"{image.Id}.{image.Format}"))
+                        )
                         .BeginDownload(cts.Token);
                 }
                 catch (OperationCanceledException)
@@ -54,9 +55,9 @@ namespace Sibusten.Philomena.Client.Examples
             Log.Information("Download ended");
         }
 
-        private void ProgressReport(ImageSearchProgressInfo downloadProgress)
+        private void ProgressReport(PhilomenaImageSearchDownloadProgressInfo downloadProgress)
         {
-            Log.Information("{ImagesProcessed}/{ImagesTotal}", downloadProgress.Processed, downloadProgress.Total);
+            Log.Information("{ImagesDownloaded}/{ImagesTotal}", downloadProgress.ImagesDownloaded, downloadProgress.ImagesTotal);
         }
     }
 }

@@ -1,12 +1,9 @@
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Serilog;
 using Sibusten.Philomena.Client.Extensions;
-using Sibusten.Philomena.Client.Fluent.Images;
 using Sibusten.Philomena.Client.Images;
+using Sibusten.Philomena.Client.Images.Downloaders;
 using Sibusten.Philomena.Client.Utilities;
 
 namespace Sibusten.Philomena.Client.Examples
@@ -18,26 +15,29 @@ namespace Sibusten.Philomena.Client.Examples
         public async Task RunExample()
         {
             PhilomenaClient client = new PhilomenaClient("https://derpibooru.org");
-            PhilomenaImageSearchBuilder search = client.SearchImages("fluttershy").WithMaxImages(5);
+            IPhilomenaImageSearch search = client.GetImageSearch("fluttershy", o => o
+                .WithMaxImages(5)
+            );
 
             Log.Information("Download query simple");
 
             // Using download all method
             await search
-                .BeginSearch()
-                .CreateParallelDownloader()
+                .CreateParallelDownloader(maxDownloadThreads: 8, o => o
                     .WithImageFileDownloader(image => $"ExampleDownloads/EnumerateSearchQuery/{image.Id}.{image.Format}")
+                )
                 .BeginDownload();
 
             Log.Information("Download query with delegates, skipping existing images");
 
-            // Use Linq to skip images already downloaded
-            // Note that filters in the search query itself are preferred since they will provide better performance. Don't use Linq filtering for conditions like image score.
+            // Use a conditional downloader to skip images already downloaded
+            // Note that filters in the search query itself are preferred since they will provide better performance. Don't use conditional downloaders for conditions like image score.
             await search
-                .BeginSearch()
-                .Where(SkipImagesAlreadyDownloaded)
-                .CreateParallelDownloader()
-                    .WithImageFileDownloader(GetFileForImage)
+                .CreateParallelDownloader(maxDownloadThreads: 8, o => o
+                    .WithConditionalDownloader(SkipImagesAlreadyDownloaded, o => o
+                        .WithImageFileDownloader(GetFileForImage)
+                    )
+                )
                 .BeginDownload();
 
             Log.Information("Downloading images explicitly");
@@ -54,17 +54,18 @@ namespace Sibusten.Philomena.Client.Examples
 
             // Downloading with multiple threads and progress updates
             // Also skips downloaded images like before
-            SyncProgress<ImageSearchProgressInfo> progress = new SyncProgress<ImageSearchProgressInfo>(DownloadProgressUpdate);
+            SyncProgress<PhilomenaImageSearchDownloadProgressInfo> progress = new SyncProgress<PhilomenaImageSearchDownloadProgressInfo>(DownloadProgressUpdate);
             await client
-                .SearchImages("fluttershy")
+                .GetImageSearch("fluttershy", o => o
                     .WithMaxImages(100)
-                .BeginSearch(searchProgress: progress)
-                .Where(SkipImagesAlreadyDownloaded)
-                .CreateParallelDownloader()
-                    .WithMaxDownloadThreads(8)
-                    .WithImageFileDownloader(GetFileForImage)
-                    .WithImageMetadataFileDownloader(GetMetadataFileForImage)
-                .BeginDownload();
+                )
+                .CreateParallelDownloader(maxDownloadThreads: 8, o => o
+                    .WithConditionalDownloader(SkipImagesAlreadyDownloaded, o => o
+                        .WithImageFileDownloader(GetFileForImage)
+                        .WithImageMetadataFileDownloader(GetMetadataFileForImage)
+                    )
+                )
+                .BeginDownload(searchDownloadProgress: progress);
         }
 
         private string GetFileForImage(IPhilomenaImage image)
@@ -92,11 +93,11 @@ namespace Sibusten.Philomena.Client.Examples
             return !ImageExists(image);
         }
 
-        private void DownloadProgressUpdate(ImageSearchProgressInfo imageSearchProgressInfo)
+        private void DownloadProgressUpdate(PhilomenaImageSearchDownloadProgressInfo imageSearchProgressInfo)
         {
             // Simple progress updating to console
-            double percentDownloaded = (double)imageSearchProgressInfo.Processed / (double)imageSearchProgressInfo.Total * 100.0;
-            Log.Information("Progress update: {ImagesProcessed}/{ImagesTotal} ({PercentDownloaded:#0.0}%)", imageSearchProgressInfo.Processed, imageSearchProgressInfo.Total, percentDownloaded);
+            double percentDownloaded = (double)imageSearchProgressInfo.ImagesDownloaded / (double)imageSearchProgressInfo.ImagesTotal * 100.0;
+            Log.Information("Progress update: {ImagesDownloaded}/{ImagesTotal} ({PercentDownloaded:#0.0}%)", imageSearchProgressInfo.ImagesDownloaded, imageSearchProgressInfo.ImagesTotal, percentDownloaded);
         }
     }
 }

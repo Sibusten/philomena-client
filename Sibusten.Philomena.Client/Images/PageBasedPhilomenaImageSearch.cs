@@ -11,7 +11,7 @@ using Sibusten.Philomena.Client.Options;
 
 namespace Sibusten.Philomena.Client.Images
 {
-    public class PagedPhilomenaImageSearch : IPhilomenaImageSearch
+    public class PageBasedPhilomenaImageSearch : IPhilomenaImageSearch
     {
         private ILogger _logger;
 
@@ -21,7 +21,7 @@ namespace Sibusten.Philomena.Client.Images
         private string _query;
         private ImageSearchOptions _options;
 
-        public PagedPhilomenaImageSearch(PhilomenaApi api, string query, ImageSearchOptions? options)
+        public PageBasedPhilomenaImageSearch(PhilomenaApi api, string query, ImageSearchOptions? options = null)
         {
             _logger = Logger.Factory.CreateLogger(GetType());
 
@@ -30,7 +30,7 @@ namespace Sibusten.Philomena.Client.Images
             _options = options ?? new ImageSearchOptions();
         }
 
-        public async IAsyncEnumerable<IPhilomenaImage> BeginSearch([EnumeratorCancellation] CancellationToken cancellationToken = default, IProgress<ImageSearchProgressInfo>? searchProgress = null, IProgress<MetadataDownloadProgressInfo>? metadataProgress = null)
+        public async IAsyncEnumerable<IPhilomenaImage> BeginSearch([EnumeratorCancellation] CancellationToken cancellationToken = default, IProgress<PhilomenaImageSearchProgressInfo>? searchProgress = null)
         {
             // TODO: Optimize this process and make use of multiple threads
             // TODO: Enumerate using id.gt/id.lt when possible
@@ -82,11 +82,11 @@ namespace Sibusten.Philomena.Client.Images
 
                 _logger.LogDebug("Downloaded metadata for {MetadataDownloaded}/{TotalImagesToDownload} images", metadataDownloaded, totalImagesToDownload);
 
-                // Update metadata progress
-                metadataProgress?.Report(new()
+                // Update search progress
+                searchProgress?.Report(new()
                 {
-                    Downloaded = metadataDownloaded,
-                    Total = totalImagesToDownload
+                    MetadataDownloaded = metadataDownloaded,
+                    TotalImages = totalImagesToDownload
                 });
 
                 // Yield the images
@@ -136,13 +136,6 @@ namespace Sibusten.Philomena.Client.Images
                     imagesProcessed++;
 
                     _logger.LogDebug("Processed {ImagesProcessed}/{TotalImagesToProcess} images", imagesProcessed, totalImagesToDownload);
-
-                    // Update search progress
-                    searchProgress?.Report(new()
-                    {
-                        Processed = imagesProcessed,
-                        Total = totalImagesToDownload
-                    });
 
                     if (imagesProcessed >= _options.MaxImages)
                     {

@@ -31,7 +31,7 @@ namespace Sibusten.Philomena.Client.Images.Downloaders
             _getFileForImage = getFileForImage;
         }
 
-        public override async Task Download(IPhilomenaImage downloadItem, CancellationToken cancellationToken = default, IProgress<DownloadProgressInfo>? progress = null)
+        public override async Task Download(IPhilomenaImage downloadItem, CancellationToken cancellationToken = default, IProgress<PhilomenaImageDownloadProgressInfo>? progress = null)
         {
             try
             {
@@ -48,7 +48,7 @@ namespace Sibusten.Philomena.Client.Images.Downloaders
                 // Create stream progress info
                 IProgress<StreamProgressInfo> streamProgress = new SyncProgress<StreamProgressInfo>(streamProgress =>
                 {
-                    progress?.Report(new DownloadProgressInfo
+                    progress?.Report(new PhilomenaImageDownloadProgressInfo
                     {
                         Current = streamProgress.BytesRead,
                         Total = streamProgress.BytesTotal,

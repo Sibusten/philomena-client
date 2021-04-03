@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 ### Added
 - Retries for failed downloads
 - Image metadata file downloader
+- Conditional image downloader
 - Configurable debug logging
 
 ### Changed
@@ -14,10 +15,14 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
     - Add new extension methods and fluent builders to simplify use of the new classes
 - Move image related classes to `Images` namespace
 - Download images to temp files before moving to target files
+- "Image metadata progress" is now "Image search progress"
+- "Image search progress" is now "Image search download progress"
 
 ### Fixed
 - Cancellation of image searches
 - Downloading images without generated thumbnails
+- Image download progress
+- "Image search progress" (now "Image search download progress") reporting 100% progress while some threads are still downloading
 
 ## [1.0.0-alpha3] - 2021-02-16
 

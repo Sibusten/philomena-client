@@ -23,7 +23,7 @@ namespace Sibusten.Philomena.Client.Images.Downloaders
             _getFileForImage = getFileForImage;
         }
 
-        public override async Task Download(IPhilomenaImage downloadItem, CancellationToken cancellationToken = default, IProgress<DownloadProgressInfo>? progress = null)
+        public override async Task Download(IPhilomenaImage downloadItem, CancellationToken cancellationToken = default, IProgress<PhilomenaImageDownloadProgressInfo>? progress = null)
         {
             try
             {
@@ -40,7 +40,7 @@ namespace Sibusten.Philomena.Client.Images.Downloaders
                 // Metadata is already downloaded, so just report 0 or 1 for progress
                 void reportProgress(bool isFinished)
                 {
-                    progress?.Report(new DownloadProgressInfo
+                    progress?.Report(new PhilomenaImageDownloadProgressInfo
                     {
                         Current = isFinished ? 1 : 0,
                         Total = 1,

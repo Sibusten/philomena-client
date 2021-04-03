@@ -1,6 +1,6 @@
-namespace Sibusten.Philomena.Client
+namespace Sibusten.Philomena.Client.Images.Downloaders
 {
-    public record DownloadProgressInfo
+    public record PhilomenaImageDownloadProgressInfo
     {
         public string Action { get; init; } = "";
         public long Current { get; init; }

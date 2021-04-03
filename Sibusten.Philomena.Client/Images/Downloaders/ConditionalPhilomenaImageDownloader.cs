@@ -12,10 +12,10 @@ namespace Sibusten.Philomena.Client.Images.Downloaders
     {
         private ILogger _logger;
 
-        private readonly IPhilomenaDownloader<IPhilomenaImage> _downloader;
+        private readonly IPhilomenaImageDownloader _downloader;
         private readonly ShouldDownloadImageDelegate _shouldDownloadImage;
 
-        public ConditionalImageDownloader(ShouldDownloadImageDelegate shouldDownloadImage, IPhilomenaDownloader<IPhilomenaImage> downloader)
+        public ConditionalImageDownloader(ShouldDownloadImageDelegate shouldDownloadImage, IPhilomenaImageDownloader downloader)
         {
             _logger = Logger.Factory.CreateLogger(GetType());
 
@@ -23,7 +23,7 @@ namespace Sibusten.Philomena.Client.Images.Downloaders
             _downloader = downloader;
         }
 
-        public override async Task Download(IPhilomenaImage downloadItem, CancellationToken cancellationToken = default, IProgress<DownloadProgressInfo>? progress = null)
+        public override async Task Download(IPhilomenaImage downloadItem, CancellationToken cancellationToken = default, IProgress<PhilomenaImageDownloadProgressInfo>? progress = null)
         {
             bool shouldDownloadImage = _shouldDownloadImage(downloadItem);
 

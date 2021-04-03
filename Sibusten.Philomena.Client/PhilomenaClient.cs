@@ -5,7 +5,9 @@ using Microsoft.Extensions.Logging;
 using Sibusten.Philomena.Api;
 using Sibusten.Philomena.Api.Models;
 using Sibusten.Philomena.Client.Fluent.Images;
+using Sibusten.Philomena.Client.Images;
 using Sibusten.Philomena.Client.Logging;
+using Sibusten.Philomena.Client.Options;
 
 namespace Sibusten.Philomena.Client
 {
@@ -24,9 +26,20 @@ namespace Sibusten.Philomena.Client
             _api = new PhilomenaApi(baseUrl);
         }
 
-        public PhilomenaImageSearchBuilder SearchImages(string query)
+        public IPhilomenaImageSearch GetImageSearch(string query)
         {
-            return new PhilomenaImageSearchBuilder(_api, query);
+            return new PageBasedPhilomenaImageSearch(_api, query);
+        }
+
+        public IPhilomenaImageSearch GetImageSearch(string query, ImageSearchOptions searchOptions)
+        {
+            return new PageBasedPhilomenaImageSearch(_api, query, searchOptions);
+        }
+
+        public IPhilomenaImageSearch GetImageSearch(string query, Func<PhilomenaImageSearchBuilder, PhilomenaImageSearchBuilder> buildOptions)
+        {
+            PhilomenaImageSearchBuilder builder = new PhilomenaImageSearchBuilder(_api, query);
+            return buildOptions(builder).Build();
         }
 
         public async Task<TagModel> GetTagById(int tagId)

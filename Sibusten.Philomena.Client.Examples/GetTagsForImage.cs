@@ -16,7 +16,7 @@ namespace Sibusten.Philomena.Client.Examples
             PhilomenaClient client = new PhilomenaClient("https://derpibooru.org");
 
             // Get an image
-            IPhilomenaImage image = await client.SearchImages("fluttershy").BeginSearch().FirstAsync();
+            IPhilomenaImage image = await client.GetImageSearch("fluttershy").BeginSearch().FirstAsync();
 
             Log.Information("Listing tags for image {ImageId}", image.Id);
 
