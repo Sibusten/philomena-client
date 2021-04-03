@@ -4,6 +4,9 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog][Keep a Changelog] and this project adheres to [Semantic Versioning][Semantic Versioning].
 
 ## [Unreleased]
+
+## [1.0.0-alpha4] - 2021-04-03
+
 ### Added
 - Retries for failed downloads
 - Image metadata file downloader
@@ -70,7 +73,8 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 [Semantic Versioning]: https://semver.org/
 
 <!-- Versions -->
-[Unreleased]: https://github.com/Sibusten/philomena-client/compare/v1.0.0-alpha3...HEAD
+[Unreleased]: https://github.com/Sibusten/philomena-client/compare/v1.0.0-alpha4...HEAD
+[1.0.0-alpha4]: https://github.com/Sibusten/philomena-client/compare/v1.0.0-alpha3..v1.0.0-alpha4
 [1.0.0-alpha3]: https://github.com/Sibusten/philomena-client/compare/v1.0.0-alpha2..v1.0.0-alpha3
 [1.0.0-alpha2]: https://github.com/Sibusten/philomena-client/compare/v1.0.0-alpha1..v1.0.0-alpha2
 [1.0.0-alpha1]: https://github.com/Sibusten/philomena-client/releases/v1.0.0-alpha1
