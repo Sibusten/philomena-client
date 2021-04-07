@@ -29,9 +29,10 @@ namespace Sibusten.Philomena.Client.Images.Downloaders
         /// <param name="progress">The progress of the image download</param>
         /// <exception cref="FlurlHttpException">Thrown when the image fails to download</exception>
         /// <returns>A stream for downloading an image</returns>
-        protected async Task<Stream> GetDownloadStream(IPhilomenaImage image, CancellationToken cancellationToken, IProgress<StreamProgressInfo>? progress)
+        protected async Task<Stream> GetDownloadStream(IPhilomenaImage image, CancellationToken cancellationToken, IProgress<StreamProgressInfo>? progress, bool isSvgVersion = false)
         {
-            IFlurlResponse response = await image.ShortViewUrl.GetAsync(cancellationToken, HttpCompletionOption.ResponseHeadersRead);
+            string? imageUrl = isSvgVersion ? image.ShortSvgViewUrl : image.ShortViewUrl;
+            IFlurlResponse response = await imageUrl.GetAsync(cancellationToken, HttpCompletionOption.ResponseHeadersRead);
 
             // Attempt to read the length of the stream from the header
             long? length = null;

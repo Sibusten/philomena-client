@@ -2,13 +2,6 @@ using System;
 
 namespace Sibusten.Philomena.Client.Options
 {
-    public enum SvgMode
-    {
-        RasterOnly,
-        SvgOnly,
-        Both
-    }
-
     public record ImageSearchOptions
     {
         /// <summary>
@@ -43,10 +36,5 @@ namespace Sibusten.Philomena.Client.Options
             }
         }
         private int _maxImages = int.MaxValue;
-
-        /// <summary>
-        /// The behavior for SVG images. Defaults to downloading only raster images.
-        /// </summary>
-        public SvgMode SvgMode { get; init; } = SvgMode.RasterOnly;
     }
 }

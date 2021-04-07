@@ -5,6 +5,12 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 
 ## [Unreleased]
 
+### Added
+- Image Svg file downloader to replace SvgMode
+
+### Removed
+- SvgMode option from image downloads
+
 ## [1.0.0-alpha4] - 2021-04-03
 
 ### Added

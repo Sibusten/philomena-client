@@ -102,36 +102,9 @@ namespace Sibusten.Philomena.Client.Images
                         continue;
                     }
 
-                    if (image.IsSvgImage)
-                    {
-                        _logger.LogDebug("Image {ImageId} is an SVG image", image.Id);
+                    _logger.LogDebug("Processing image {ImageId}", image.Id);
 
-                        if (_options.SvgMode is SvgMode.RasterOnly or SvgMode.Both)
-                        {
-                            _logger.LogDebug("Processing raster version of image {ImageId}", image.Id);
-
-                            // Provide the original image which represents the raster version
-                            yield return image;
-                        }
-
-                        if (_options.SvgMode is SvgMode.SvgOnly or SvgMode.Both)
-                        {
-                            _logger.LogDebug("Processing SVG version of image {ImageId}", image.Id);
-
-                            // Provide a new image which represents the SVG version
-                            IPhilomenaImage svgImage = new PhilomenaImage(imageModel)
-                            {
-                                IsSvgVersion = true
-                            };
-                            yield return svgImage;
-                        }
-                    }
-                    else
-                    {
-                        _logger.LogDebug("Processing image {ImageId}", image.Id);
-
-                        yield return image;
-                    }
+                    yield return image;
 
                     imagesProcessed++;
 

@@ -99,17 +99,5 @@ namespace Sibusten.Philomena.Client.Fluent.Images
             };
             return this;
         }
-
-        /// <summary>
-        /// The behavior for SVG images. Defaults to downloading only raster images.
-        /// </summary>
-        public PhilomenaImageSearchBuilder WithSvgMode(SvgMode svgMode)
-        {
-            _options = _options with
-            {
-                SvgMode = svgMode
-            };
-            return this;
-        }
     }
 }

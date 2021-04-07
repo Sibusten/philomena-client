@@ -11,7 +11,6 @@ namespace Sibusten.Philomena.Client.Images
     {
         public ImageModel Model { get; private init; }
         private readonly int _id;
-        public bool IsSvgVersion { get; init; } = false;
 
         public bool IsSvgImage => Model.Format == "svg";
 
@@ -61,48 +60,37 @@ namespace Sibusten.Philomena.Client.Images
             }
         }
 
-        public string? ShortViewUrl
+        public string? ShortViewUrl => Model.Representations?.Full;
+
+        public string? ShortSvgViewUrl
         {
             get
             {
-                string? shortViewUrl = Model.Representations?.Full;
-
-                if (shortViewUrl is null)
+                if (ShortViewUrl is null)
                 {
                     return null;
                 }
 
-                if (IsSvgVersion)
-                {
-                    // Modify the URL to point to the SVG image
-                    string urlWithoutExtension = shortViewUrl.Substring(0, shortViewUrl.LastIndexOf('.'));
-                    return urlWithoutExtension + ".svg";
-                }
-
-                // Return the normal URL
-                return shortViewUrl;
+                // Modify the URL to point to the SVG image
+                string urlWithoutExtension = ShortViewUrl.Substring(0, ShortViewUrl.LastIndexOf('.'));
+                return urlWithoutExtension + ".svg";
             }
         }
 
-        public string? ViewUrl
+        public string? ViewUrl => Model.ViewUrl;
+
+        public string? SvgViewUrl
         {
             get
             {
-                string? viewUrl = Model.ViewUrl;
-                if (viewUrl is null)
+                if (ViewUrl is null)
                 {
                     return null;
                 }
 
-                if (IsSvgVersion)
-                {
-                    // Modify the URL to point to the SVG image
-                    string urlWithoutExtension = viewUrl.Substring(0, viewUrl.LastIndexOf('.'));
-                    return urlWithoutExtension + ".svg";
-                }
-
-                // Return the normal URL
-                return viewUrl;
+                // Modify the URL to point to the SVG image
+                string urlWithoutExtension = ViewUrl.Substring(0, ViewUrl.LastIndexOf('.'));
+                return urlWithoutExtension + ".svg";
             }
         }
 
@@ -113,28 +101,15 @@ namespace Sibusten.Philomena.Client.Images
                 if (IsSvgImage)
                 {
                     // The image is an SVG image, which has two possible formats
-                    // Assume rasters are always png
-                    return IsSvgVersion ? "svg" : "png";
+                    // Assume rasters are always png, and return that as the format since rasters are what is presented to the booru user
+                    return "png";
                 }
 
                 return Model.Format;
             }
         }
 
-        public int? FileSize
-        {
-            get
-            {
-                if (IsSvgVersion)
-                {
-                    // The size of the SVG image is not known
-                    return null;
-                }
-
-                return Model.Size;
-            }
-        }
-
+        public int? FileSize => Model.Size;
         public string? Hash => Model.Sha512Hash;
         public string? OriginalHash => Model.OrigSha512Hash;
         public List<string> TagNames => Model.Tags?.ToList() ?? new List<string>();  // .ToList to prevent editing the original model list

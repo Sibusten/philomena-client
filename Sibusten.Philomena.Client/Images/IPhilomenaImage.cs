@@ -11,12 +11,6 @@ namespace Sibusten.Philomena.Client.Images
         bool IsSvgImage { get; }
 
         /// <summary>
-        /// True if this represents the SVG version of an image, or false if it represents the raster version
-        /// </summary>
-        /// <value></value>
-        bool IsSvgVersion { get; }
-
-        /// <summary>
         /// Raw metadata received from the API
         /// </summary>
         string RawMetadata { get; }
@@ -40,7 +34,9 @@ namespace Sibusten.Philomena.Client.Images
         int? UploaderId { get; }
         int? Upvotes { get; }
         string? ViewUrl { get; }
+        string? SvgViewUrl { get; }
         string? ShortViewUrl { get; }
+        string? ShortSvgViewUrl { get; }
         bool? Processed { get; }
         string? MimeType { get; }
         bool? IsAnimated { get; }

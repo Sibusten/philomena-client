@@ -44,6 +44,21 @@ namespace Sibusten.Philomena.Client.Fluent.Images
         }
 
         /// <summary>
+        /// Adds an image SVG file downloader
+        /// </summary>
+        /// <param name="getFileForImage">A delegate to get the file for an SVG image</param>
+        public SequentialPhilomenaImageDownloaderBuilder WithImageSvgFileDownloader(GetFileForImageDelegate getFileForImage)
+        {
+            return new
+            (
+                _downloaders.Append
+                (
+                    new PhilomenaImageSvgFileDownloader(getFileForImage)
+                )
+            );
+        }
+
+        /// <summary>
         /// Adds an image metadata file downloader
         /// </summary>
         /// <param name="getFileForImage">A delegate to get the file for an image</param>
