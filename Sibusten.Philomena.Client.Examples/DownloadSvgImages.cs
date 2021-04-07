@@ -18,11 +18,11 @@ namespace Sibusten.Philomena.Client.Examples
             // Download both SVG sources and rasters
             await client
                 .GetImageSearch("original_format:svg", o => o
-                    .WithSvgMode(SvgMode.Both)
                     .WithMaxImages(5)
                 )
                 .CreateParallelDownloader(maxDownloadThreads: 1, o => o
                     .WithImageFileDownloader(image => $"ExampleDownloads/DownloadSvgImages/{image.Id}.{image.Format}")
+                    .WithImageSvgFileDownloader(image => $"ExampleDownloads/DownloadSvgImages/{image.Id}.svg")  // Note: image.Format is always 'png' for SVG images
                 )
                 .BeginDownload();
         }
