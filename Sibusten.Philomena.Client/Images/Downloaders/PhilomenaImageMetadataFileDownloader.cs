@@ -44,7 +44,7 @@ namespace Sibusten.Philomena.Client.Images.Downloaders
                     {
                         Current = isFinished ? 1 : 0,
                         Total = 1,
-                        Action = $"{downloadItem.Id} Metadata",
+                        Action = $"Downloading image {downloadItem.Id} Metadata",
                     });
                 }
 

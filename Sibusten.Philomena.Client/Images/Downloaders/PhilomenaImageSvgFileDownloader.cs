@@ -51,7 +51,7 @@ namespace Sibusten.Philomena.Client.Images.Downloaders
                     {
                         Current = streamProgress.BytesRead,
                         Total = streamProgress.BytesTotal,
-                        Action = $"{downloadItem.Id} (SVG)"
+                        Action = $"Downloading image {downloadItem.Id} (SVG)"
                     });
                 });
 

@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 ### Added
 - Image Svg file downloader to replace SvgMode
 
+### Changed
+- Clarify download progress action text
+
 ### Removed
 - SvgMode option from image downloads
 
