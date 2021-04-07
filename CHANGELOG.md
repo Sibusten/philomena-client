@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 
 ## [Unreleased]
 
+## [1.0.0-alpha5] - 2021-04-07
+
 ### Added
 - Image Svg file downloader to replace SvgMode
 
@@ -82,7 +84,8 @@ The format is based on [Keep a Changelog][Keep a Changelog] and this project adh
 [Semantic Versioning]: https://semver.org/
 
 <!-- Versions -->
-[Unreleased]: https://github.com/Sibusten/philomena-client/compare/v1.0.0-alpha4...HEAD
+[Unreleased]: https://github.com/Sibusten/philomena-client/compare/v1.0.0-alpha5...HEAD
+[1.0.0-alpha5]: https://github.com/Sibusten/philomena-client/compare/v1.0.0-alpha4..v1.0.0-alpha5
 [1.0.0-alpha4]: https://github.com/Sibusten/philomena-client/compare/v1.0.0-alpha3..v1.0.0-alpha4
 [1.0.0-alpha3]: https://github.com/Sibusten/philomena-client/compare/v1.0.0-alpha2..v1.0.0-alpha3
 [1.0.0-alpha2]: https://github.com/Sibusten/philomena-client/compare/v1.0.0-alpha1..v1.0.0-alpha2

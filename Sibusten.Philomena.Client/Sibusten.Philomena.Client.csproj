@@ -9,7 +9,7 @@
     <PackageDescription>A fluent C# client for interacting with imageboards running Philomena, such as Derpibooru.</PackageDescription>
     <PackageTags>philomena; derpibooru; api; download; image; booru; imageboard; client; fluent</PackageTags>
     <PackageId>Sibusten.Philomena.Client</PackageId>
-    <Version>1.0.0-alpha4</Version>
+    <Version>1.0.0-alpha5</Version>
     <Authors>Sibusten</Authors>
     <Company>Sibusten</Company>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
